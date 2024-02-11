@@ -1,0 +1,16 @@
+{
+  "generatorData": [
+    {
+      "level": 1,
+      "hoursPerGasCan": 12
+    },
+    {
+      "level": 2,
+      "hoursPerGasCan": 18
+    },
+    {
+      "level": 3,
+      "hoursPerGasCan": 24
+    }
+  ]
+}
