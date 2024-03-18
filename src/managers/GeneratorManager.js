@@ -1,4 +1,4 @@
-import jsonData from "../../data/generatorData.json";
+import jsonData from "../../data/static/generatorData.json";
 
 class GeneratorManager {
   constructor() {
