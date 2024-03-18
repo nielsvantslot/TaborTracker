@@ -1,19 +1,19 @@
-import jsonData from '../../data/generatorData.json';
+import jsonData from "../../data/generatorData.json";
 
 class GeneratorManager {
-  constructor(jsonData) {
+  constructor() {
     this.generators = JSON.parse(jsonData)["generatorData"];
   }
 
   getAllGenerators() {
-    return this.generators.map(generator => ({
+    return this.generators.map((generator) => ({
       level: generator.level,
-      hoursPerGasCan: generator.hoursPerGasCan
+      hoursPerGasCan: generator.hoursPerGasCan,
     }));
   }
 
   getGeneratorByLevel(level) {
-    return this.generators.find(generator => generator.level === level);
+    return this.generators.find((generator) => generator.level === level);
   }
 
   getHoursPerGasCanByLevel(level) {
