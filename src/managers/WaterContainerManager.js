@@ -1,4 +1,4 @@
-import jsonData from '../../data/WaterContainerData.json';
+import jsonData from "../../data/static/WaterContainerData.json";
 
 class WaterContainerManager {
   constructor() {
@@ -6,14 +6,14 @@ class WaterContainerManager {
   }
 
   getAllContainers() {
-    return this.containers.map(container => ({
+    return this.containers.map((container) => ({
       name: container.Container,
-      waterCapacity: container["Water Capacity"]
+      waterCapacity: container["Water Capacity"],
     }));
   }
 
   getContainerByName(name) {
-    return this.containers.find(container => container.Container === name);
+    return this.containers.find((container) => container.Container === name);
   }
 
   getContainerCapacityByName(name) {

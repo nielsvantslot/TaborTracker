@@ -10,10 +10,11 @@ export class PlayerGraphManager {
     this.scraper = new Scraper();
     this.client = Discord.getInstance().getClient();
     this.currentMessage = null;
-    this.dataFile = "./data/playerGraphData.json";
+    this.dataFile = "./data/dynamic/playerGraphData.json";
   }
 
   run() {
+    this.ensureStorage();
     const data = this._getData();
     if (data) this.playerGraph.setData(data);
 
@@ -21,6 +22,22 @@ export class PlayerGraphManager {
     setInterval(() => {
       this._sendPlayerData();
     }, refreshRate);
+  }
+
+  ensureStorage() {
+    fs.access(this.dataFile, fs.constants.F_OK, (err) => {
+      if (err) {
+        fs.writeFile(this.dataFile, "", (err) => {
+          if (err) {
+            console.error("Error creating file:", err);
+          } else {
+            console.log(`File ${this.dataFile} created successfully.`);
+          }
+        });
+      } else {
+        console.log(`File ${this.dataFile} already exists.`);
+      }
+    });
   }
 
   _getData() {

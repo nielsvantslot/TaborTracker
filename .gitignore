@@ -4,6 +4,9 @@ node_modules/
 # Optional npm cache directory
 .npm
 
+# Data
+data/dynamic/playerGraphData.json
+
 # Logs
 logs
 *.log
