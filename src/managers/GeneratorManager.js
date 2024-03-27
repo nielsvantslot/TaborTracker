@@ -1,23 +1,21 @@
-import jsonData from "../../data/static/generatorData.json";
+import HashMap from "../structs/Hashmap";
 
-class GeneratorManager {
+export default class GeneratorManager {
   constructor() {
-    this.generators = JSON.parse(jsonData)["generatorData"];
+    this.generators = new HashMap();
   }
 
-  getAllGenerators() {
-    return this.generators.map((generator) => ({
-      level: generator.level,
-      hoursPerGasCan: generator.hoursPerGasCan,
-    }));
+  subscribe(generator) {
+    this.generators.put(generator.getUserId(), generator);
   }
 
-  getGeneratorByLevel(level) {
-    return this.generators.find((generator) => generator.level === level);
+  notify(amount) {
+    this.generators.forEach((generator) => {
+      generator.decreaseFuel(amount);
+    });
   }
 
-  getHoursPerGasCanByLevel(level) {
-    const generator = this.getGeneratorByLevel(level);
-    return generator ? generator.hoursPerGasCan : null;
+  getByUserId(uid) {
+    this.generators.get(uid);
   }
 }

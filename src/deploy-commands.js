@@ -2,9 +2,7 @@ import { REST, Routes } from "discord.js";
 import { clientId, guildId, discordToken } from "./constants.js";
 import fs from "fs";
 import path from "node:path";
-
-const __filename = new URL(import.meta.url).pathname;
-const __dirname = __filename.substring(0, __filename.lastIndexOf("/"));
+import { __dirname } from "./utils.js";
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
