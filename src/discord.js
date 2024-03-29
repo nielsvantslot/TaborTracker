@@ -6,17 +6,13 @@ import { PlayerGraphManager } from "./managers/PlayerGraphManager.js";
 import { __dirname } from "./utils.js";
 
 export class Discord {
-  async _constructor() {
-    this.client = new Client({ intents: [GatewayIntentBits.Guilds] });
-    this.client.commands = new Collection();
-    this.playerGraph = new PlayerGraphManager();
-  }
-
-  static getInstance() {
+  constructor() {
     if (!Discord.instance) {
-      Discord.instance = new this();
+      this.client = new Client({ intents: [GatewayIntentBits.Guilds] });
+      this.client.commands = new Collection();
+      this.playerGraph = new PlayerGraphManager();
+      Discord.instance = this;
     }
-
     return Discord.instance;
   }
 
@@ -25,17 +21,18 @@ export class Discord {
   }
 
   async run() {
-    await this._constructor();
     await this.loadCommands();
     this.client.on("ready", () => {
       console.log(`Logged in as ${this.client.user.tag}!`);
 
-      // PLayer graph logic
       this.playerGraph.run();
     });
 
     this.client.login(discordToken);
+    this.handleCommands();
+  }
 
+  handleCommands() {
     this.client.on(Events.InteractionCreate, async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
 
@@ -99,3 +96,8 @@ export class Discord {
     }
   }
 }
+
+const instance = new Discord();
+Object.freeze(instance);
+
+export default instance;

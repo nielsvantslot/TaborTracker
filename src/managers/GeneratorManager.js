@@ -1,8 +1,13 @@
-import HashMap from "../structs/Hashmap";
+import HashMap from "../structs/Hashmap.js";
+import Generator from "../models/Generator.js";
 
-export default class GeneratorManager {
+class GeneratorManager {
   constructor() {
-    this.generators = new HashMap();
+    if (!GeneratorManager.instance) {
+      this.generators = new HashMap();
+      GeneratorManager.instance = this;
+    }
+    return GeneratorManager.instance;
   }
 
   subscribe(generator) {
@@ -16,6 +21,16 @@ export default class GeneratorManager {
   }
 
   getByUserId(uid) {
-    this.generators.get(uid);
+    let generator = this.generators.get(uid);
+    if (!generator) {
+      generator = new Generator(uid);
+      this.subscribe(generator);
+    }
+    return generator;
   }
 }
+
+const instance = new GeneratorManager();
+Object.freeze(instance);
+
+export default instance;

@@ -1,8 +1,8 @@
-import jsonData from "../../data/static/generatorData.json";
+import jsonData from "../../data/static/generatorData.json" assert { type: "json" };
 
-class GeneratorManager {
+export default class GeneratorDataManager {
   constructor() {
-    this.generators = JSON.parse(jsonData)["generatorData"];
+    this.generators = jsonData["generatorData"];
   }
 
   getAllGenerators() {

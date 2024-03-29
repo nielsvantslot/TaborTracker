@@ -1,14 +1,13 @@
 import { channelId, refreshRate, roleId } from "../constants.js";
 import { Graph } from "../graph.js";
 import { Scraper } from "../scraper.js";
-import { Discord } from "../discord.js";
+import discord from "../discord.js";
 import fs from "fs";
 
 export class PlayerGraphManager {
   constructor() {
     this.playerGraph = new Graph();
     this.scraper = new Scraper();
-    this.client = Discord.getInstance().getClient();
     this.currentMessage = null;
     this.dataFile = "./data/dynamic/playerGraphData.json";
   }
@@ -92,7 +91,7 @@ export class PlayerGraphManager {
   }
 
   async _sendNewMessage(message) {
-    const channel = this.client.channels.cache.get(channelId);
+    const channel = discord.getClient().channels.cache.get(channelId);
     if (!channel) throw new Error("Channel not found.");
 
     this.currentMessage = await channel.send(message);

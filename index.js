@@ -1,4 +1,3 @@
-import { Discord } from "./src/discord.js";
+import discord from "./src/discord.js";
 
-const bot = Discord.getInstance();
-bot.run();
+discord.run();
