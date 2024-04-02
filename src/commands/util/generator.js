@@ -31,25 +31,19 @@ const execute = async (interaction) => {
       if (confirmation.customId === "powerOn") {
         generator.powerOn();
         const { ui, row } = generateUi(interaction.user.id);
-        await confirmation.update({
-          embeds: [ui],
-          components: [row],
-        });
       } else if (confirmation.customId === "powerOff") {
         generator.powerOff();
-        const { ui, row } = generateUi(interaction.user.id);
-        await confirmation.update({
-          embeds: [ui],
-          components: [row],
-        });
       } else if (confirmation.customId === "addFuel") {
         generator.addFuel();
-        const { ui, row } = generateUi(interaction.user.id);
-        await confirmation.update({
-          embeds: [ui],
-          components: [row],
-        });
+      } else if (confirmation.customId === "upgradeLevel") {
+        generator.upgradeLevel();
       }
+
+      const { ui, row } = generateUi(interaction.user.id);
+      await confirmation.update({
+        embeds: [ui],
+        components: [row],
+      });
 
       await handleConfirmation();
     } catch (e) {

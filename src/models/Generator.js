@@ -26,6 +26,10 @@ export default class Generator {
     }
   }
 
+  upgradeLevel() {
+    this.level = Math.min(this.level + 1, 3);
+  }
+
   _getMaxFuel() {
     return this.data.getHoursPerGasCanByLevel(this.level) * 60 * 4;
   }
