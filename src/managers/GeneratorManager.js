@@ -10,21 +10,11 @@ class GeneratorManager {
     return GeneratorManager.instance;
   }
 
-  subscribe(generator) {
-    this.generators.put(generator.getUserId(), generator);
-  }
-
-  notify(amount) {
-    this.generators.forEach((generator) => {
-      generator.decreaseFuel(amount);
-    });
-  }
-
   getByUserId(uid) {
     let generator = this.generators.get(uid);
     if (!generator) {
       generator = new Generator(uid);
-      this.subscribe(generator);
+      this.generators.put(uid, generator);
     }
     return generator;
   }
