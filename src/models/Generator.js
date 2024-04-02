@@ -1,5 +1,6 @@
 import GeneratorDataManager from "../managers/GeneratorDataManager.js";
 import generatorNotifier from "../managers/GeneratorNotifier.js";
+import discord from "../discord.js";
 
 export default class Generator {
   constructor(uid) {
@@ -8,6 +9,7 @@ export default class Generator {
     this.fuel = 0;
     this.level = 1;
     this.powered = false;
+    this.notify = this.notify.bind(this);
   }
 
   addFuel() {
@@ -17,17 +19,29 @@ export default class Generator {
     );
   }
 
-  decreaseFuel(amount) {
+  notify(amount) {
+    this.decreaseFuel(amount);
+    if (this.fuel / 60 === 1) {
+      const client = discord.getClient();
+      const user = client.users.fetch(this.userId);
+      user.send(this.getFuelLevel());
+    }
+  }
+
+  async decreaseFuel(amount) {
     if (this.fuel > 0) {
       this.fuel -= amount;
-      console.log(`${this.name} fuel decreased to ${this.fuel}`);
+      console.log(`${this.userId} fuel decreased to ${this.fuel}`);
     } else {
-      console.log(`${this.name} has run out of fuel`);
+      this.powerOff();
+      console.log(`${this.userId} has run out of fuel`);
     }
   }
 
   upgradeLevel() {
+    const percentage = this.getFuelLevel() / 100;
     this.level = Math.min(this.level + 1, 3);
+    this.fuel = this._getMaxFuel() * percentage;
   }
 
   _getMaxFuel() {
@@ -35,12 +49,12 @@ export default class Generator {
   }
 
   powerOff() {
-    generatorNotifier.unsubscribe(this);
+    generatorNotifier.unsubscribe(this.notify);
     this.powered = false;
   }
 
   powerOn() {
-    generatorNotifier.subscribe(this);
+    generatorNotifier.subscribe(this.notify);
     this.powered = true;
   }
 
@@ -57,7 +71,7 @@ export default class Generator {
   }
 
   getFuelLevel() {
-    return (this.fuel / this._getMaxFuel()) * 100 + "%";
+    return Math.floor((this.fuel / this._getMaxFuel()) * 100);
   }
 
   getLevel() {
@@ -65,6 +79,6 @@ export default class Generator {
   }
 
   getTimeLeft() {
-    return this.fuel / 60;
+    return Math.floor(this.fuel / 60);
   }
 }

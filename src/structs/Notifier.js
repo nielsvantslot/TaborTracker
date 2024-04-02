@@ -4,7 +4,7 @@ export default class Notifier {
   }
 
   subscribe(subscriber) {
-    if (typeof subscriber !== "object") {
+    if (typeof subscriber !== "function") {
       throw new Error(
         `${typeof subscriber} is not a valid argument for subscribe method, expected a function instead`,
       );
@@ -13,7 +13,7 @@ export default class Notifier {
   }
 
   unsubscribe(subscriber) {
-    if (typeof subscriber !== "object") {
+    if (typeof subscriber !== "function") {
       throw new Error(
         `${typeof subscriber} is not a valid argument for unsubscribe method, expected a function instead`,
       );

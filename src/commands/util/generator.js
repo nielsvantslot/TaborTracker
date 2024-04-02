@@ -28,15 +28,19 @@ const execute = async (interaction) => {
         time: 60_000,
       });
 
-      if (confirmation.customId === "powerOn") {
-        generator.powerOn();
-        const { ui, row } = generateUi(interaction.user.id);
-      } else if (confirmation.customId === "powerOff") {
-        generator.powerOff();
-      } else if (confirmation.customId === "addFuel") {
-        generator.addFuel();
-      } else if (confirmation.customId === "upgradeLevel") {
-        generator.upgradeLevel();
+      switch (confirmation.customId) {
+        case "powerOn":
+          generator.powerOn();
+          break;
+        case "powerOff":
+          generator.powerOff();
+          break;
+        case "addFuel":
+          generator.addFuel();
+          break;
+        case "upgradeLevel":
+          generator.upgradeLevel();
+          break;
       }
 
       const { ui, row } = generateUi(interaction.user.id);
@@ -47,9 +51,10 @@ const execute = async (interaction) => {
 
       await handleConfirmation();
     } catch (e) {
-      console.error(e);
       await interaction.editReply({
-        content: "Something went wrong, cancelling.",
+        content: "Time is over, cancelling.",
+        embeds: [],
+        components: [],
       });
     }
   };
@@ -82,7 +87,7 @@ function generateUi(uid) {
     },
     {
       name: "Fuel level",
-      value: `${generator.getFuelLevel()}`,
+      value: `${generator.getFuelLevel()}%`,
       inline: true,
     },
   );

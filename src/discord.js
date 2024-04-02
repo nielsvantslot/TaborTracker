@@ -4,6 +4,7 @@ import path from "node:path";
 import { discordToken } from "./constants.js";
 import { PlayerGraphManager } from "./managers/PlayerGraphManager.js";
 import { __dirname } from "./utils.js";
+import generatorNotifier from "./managers/GeneratorNotifier.js";
 
 export class Discord {
   constructor() {
@@ -30,6 +31,11 @@ export class Discord {
 
     this.client.login(discordToken);
     this.handleCommands();
+    setInterval(this.publishNotification, 60000);
+  }
+
+  publishNotification() {
+    generatorNotifier.publish(1);
   }
 
   handleCommands() {
