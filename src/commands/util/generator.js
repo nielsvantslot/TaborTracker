@@ -18,6 +18,7 @@ const execute = async (interaction) => {
   const response = await interaction.reply({
     embeds: [ui],
     components: [row],
+    ephemeral: true,
   });
 
   const collectorFilter = (i) => i.user.id === interaction.user.id;
@@ -47,15 +48,12 @@ const execute = async (interaction) => {
       await confirmation.update({
         embeds: [ui],
         components: [row],
+        ephemeral: true,
       });
 
       await handleConfirmation();
     } catch (e) {
-      await interaction.editReply({
-        content: "Time is over, cancelling.",
-        embeds: [],
-        components: [],
-      });
+      await interaction.deleteReply();
     }
   };
 

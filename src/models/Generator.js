@@ -1,6 +1,7 @@
 import GeneratorDataManager from "../managers/GeneratorDataManager.js";
 import generatorNotifier from "../managers/GeneratorNotifier.js";
 import discord from "../discord.js";
+import { EmbedBuilder } from "discord.js";
 
 export default class Generator {
   constructor(uid) {
@@ -12,23 +13,28 @@ export default class Generator {
     this.notify = this.notify.bind(this);
   }
 
-  addFuel() {
-    this.fuel = Math.min(
-      (this.level + 1) * 6 * 60 * 4,
-      this.fuel + (this.level + 1) * 6 * 60,
-    );
-  }
-
-  notify(amount) {
+  async notify(amount) {
     this.decreaseFuel(amount);
     if (this.fuel / 60 === 1) {
       const client = discord.getClient();
-      const user = client.users.fetch(this.userId);
-      user.send(this.getFuelLevel());
+      const user = await client.users.fetch(this.userId);
+      const warning = new EmbedBuilder()
+        .setColor("#ffcc00")
+        .setTitle("Generator Reminder")
+        .setDescription("Your generator only has 1 hour left!")
+        .setTimestamp();
+      user.send({ embeds: [warning] });
     }
   }
 
-  async decreaseFuel(amount) {
+  addFuel() {
+    this.fuel = Math.min(
+      this.data.getHoursPerGasCanByLevel(this.level) * 60 * 4,
+      this.fuel + this.data.getHoursPerGasCanByLevel(this.level) * 60,
+    );
+  }
+
+  decreaseFuel(amount) {
     if (this.fuel > 0) {
       this.fuel -= amount;
       console.log(`${this.userId} fuel decreased to ${this.fuel}`);

@@ -1,7 +1,7 @@
 import { Client, Collection, Events, GatewayIntentBits } from "discord.js";
 import fs from "fs";
 import path from "node:path";
-import { discordToken } from "./constants.js";
+import { discordToken } from "../util/constants.js";
 import { PlayerGraphManager } from "./managers/PlayerGraphManager.js";
 import { __dirname } from "./utils.js";
 import generatorNotifier from "./managers/GeneratorNotifier.js";
@@ -24,7 +24,7 @@ export class Discord {
   async run() {
     await this.loadCommands();
     this.client.on("ready", () => {
-      console.log(`Logged in as ${this.client.user.tag}!`);
+      console.log("\x1b[32m%s\x1b[0m", `Logged in as ${this.client.user.tag}!`);
 
       this.playerGraph.run();
     });
@@ -88,6 +88,7 @@ export class Discord {
                 this.client.commands.set(command.data.name, command);
               } else {
                 console.log(
+                  "\x1b[33m%s\x1b[0m",
                   `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
                 );
               }

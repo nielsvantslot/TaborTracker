@@ -1,4 +1,4 @@
-import { channelId, refreshRate, roleId } from "../constants.js";
+import { channelId, refreshRate, roleId } from "../../util/constants.js";
 import { Graph } from "../graph.js";
 import { Scraper } from "../scraper.js";
 import discord from "../discord.js";
@@ -30,11 +30,17 @@ export class PlayerGraphManager {
           if (err) {
             console.error("Error creating file:", err);
           } else {
-            console.log(`File ${this.dataFile} created successfully.`);
+            console.log(
+              "\x1b[32m%s\x1b[0m",
+              `File ${this.dataFile} created successfully.`,
+            );
           }
         });
       } else {
-        console.log(`File ${this.dataFile} already exists.`);
+        console.log(
+          "\x1b[33m%s\x1b[0m",
+          `File ${this.dataFile} already exists.`,
+        );
       }
     });
   }
@@ -52,7 +58,10 @@ export class PlayerGraphManager {
   _saveData(data) {
     try {
       fs.writeFileSync(this.dataFile, JSON.stringify(data, null, 2), "utf8");
-      console.log("Data has been written to", this.dataFile);
+      console.log(
+        "\x1b[32m%s\x1b[0m",
+        `Data has been written to ${this.dataFile}`,
+      );
     } catch (error) {
       console.error("Error writing file:", error);
     }

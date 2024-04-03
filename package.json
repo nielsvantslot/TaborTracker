@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prod": "set NODE_ENV=production && node index.js",
-    "dev": "set NODE_ENV=development && nodemon --ignore 'data' index.js",
-    "deploy": "node src/deploy-commands.js"
+    "prod": "NODE_ENV=production node util/deploy-commands.js && NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=development nodemon --ignore 'data' index.js",
+    "deploy": "node util/deploy-commands.js",
+    "clean": "node util/delete-commands.js"
   },
   "author": "",
   "license": "ISC",

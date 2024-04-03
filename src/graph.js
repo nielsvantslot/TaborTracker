@@ -1,6 +1,6 @@
 import { AttachmentBuilder } from "discord.js";
 import { createCanvas } from "canvas";
-import { graphLength } from "./constants.js";
+import { graphLength } from "../util/constants.js";
 import Chart from "chart.js/auto";
 
 export class Graph {

@@ -2,7 +2,7 @@ import { REST, Routes } from "discord.js";
 import { clientId, guildId, discordToken } from "./constants.js";
 import fs from "fs";
 import path from "node:path";
-import { __dirname } from "./utils.js";
+import { __dirname } from "../src/utils.js";
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
@@ -23,6 +23,7 @@ for (const folder of commandFolders) {
       commands.push(command.data.toJSON());
     } else {
       console.log(
+        "\x1b[33m%s\x1b[0m",
         `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
       );
     }
@@ -46,6 +47,7 @@ const rest = new REST().setToken(discordToken);
     );
 
     console.log(
+      "\x1b[32m%s\x1b[0m",
       `Successfully reloaded ${data.length} application (/) commands.`,
     );
   } catch (error) {
