@@ -1,5 +1,7 @@
-const __filename = new URL(import.meta.url).pathname;
-export const __dirname = __filename.substring(0, __filename.lastIndexOf("/"));
+import path from 'path';
+
+export const __filename = new URL(import.meta.url).pathname;
+export const __dirname = path.resolve();
 
 export async function getCurrentTime() {
   const now = new Date();

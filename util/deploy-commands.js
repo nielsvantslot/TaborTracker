@@ -6,7 +6,7 @@ import { __dirname } from "../src/utils.js";
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
-const foldersPath = path.join(__dirname, "commands");
+const foldersPath = path.join(__dirname, "src/commands");
 const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
@@ -15,9 +15,10 @@ for (const folder of commandFolders) {
   const commandFiles = fs
     .readdirSync(commandsPath)
     .filter((file) => file.endsWith(".js"));
+
   // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
   for (const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
+    const filePath = `file://${path.resolve(commandsPath, file).replace(/\\/g, '/')}`;
     const command = await import(filePath);
     if ("data" in command && "execute" in command) {
       commands.push(command.data.toJSON());
