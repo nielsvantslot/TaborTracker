@@ -1,11 +1,11 @@
-import GeneratorDataManager from "../managers/GeneratorDataManager.js";
+import StaticGeneratorDataManager from "../managers/StaticGeneratorDataManager.js";
 import generatorNotifier from "../managers/GeneratorNotifier.js";
 import discord from "../discord.js";
 import { EmbedBuilder } from "discord.js";
 
 export default class Generator {
   constructor(uid) {
-    this.data = new GeneratorDataManager();
+    this.data = new StaticGeneratorDataManager();
     this.userId = uid;
     this.fuel = 0;
     this.level = 1;
