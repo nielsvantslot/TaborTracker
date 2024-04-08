@@ -31,7 +31,7 @@ export class Scraper {
         time: currentTime,
       };
     } catch (error) {
-      throw new Error("Error fetching/scraping data: " + error.message);
+      console.error("Error fetching/scraping data: " + error.message);
     }
   }
 }

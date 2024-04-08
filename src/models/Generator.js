@@ -60,6 +60,7 @@ export default class Generator {
   }
 
   powerOn() {
+    if (this.fuel < 1) return;
     generatorNotifier.subscribe(this.notify);
     this.powered = true;
   }
