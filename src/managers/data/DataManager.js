@@ -9,7 +9,7 @@ export default class DataManager {
    * @param {string} fileName - The name of the file.
    */
   constructor(directoryPath, fileName) {
-    this.filePath = path.resolve(__dirname, 'data', directoryPath, fileName);
+    this.filePath = `file://${path.resolve(__dirname, 'data', directoryPath, fileName).replace(/\\/g, '/')}`;
     this.locked = false;
     this.initializeFile();
   }

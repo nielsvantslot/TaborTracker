@@ -1,5 +1,5 @@
-import HashMap from "../structs/Hashmap.js";
-import Generator from "../models/Generator.js";
+import HashMap from "../../structs/Hashmap.js";
+import Generator from "../../models/Generator.js";
 
 class GeneratorManager {
   constructor() {

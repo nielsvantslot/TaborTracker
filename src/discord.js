@@ -4,7 +4,7 @@ import path from "node:path";
 import { discordToken } from "../util/constants.js";
 import { PlayerGraphManager } from "./managers/PlayerGraphManager.js";
 import { __dirname } from "./utils.js";
-import generatorNotifier from "./managers/GeneratorNotifier.js";
+import generatorNotifier from "./managers/generator/GeneratorNotifier.js";
 
 export class Discord {
   constructor() {
@@ -71,30 +71,29 @@ export class Discord {
   }
 
   async loadCommands() {
-    const foldersPath = path.join(__dirname, "commands");
+    const foldersPath = path.join(__dirname, "src/commands");
     try {
       const commandFolders = await fs.promises.readdir(foldersPath);
 
       for (const folder of commandFolders) {
         const commandsPath = path.join(foldersPath, folder);
-        const commandFiles = await fs.promises.readdir(commandsPath);
+        const unFilteredcommandFiles = await fs.promises.readdir(commandsPath)
+        const commandFiles = await unFilteredcommandFiles.filter((file) => file.endsWith(".js"));
 
         for (const file of commandFiles) {
-          if (file.endsWith(".js")) {
-            const filePath = path.join(commandsPath, file);
-            try {
-              const command = await import(filePath);
-              if ("data" in command && "execute" in command) {
-                this.client.commands.set(command.data.name, command);
-              } else {
-                console.log(
-                  "\x1b[33m%s\x1b[0m",
-                  `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
-                );
-              }
-            } catch (error) {
-              console.error(`Error loading command from ${filePath}:`, error);
+          const filePath = `file://${path.resolve(commandsPath, file).replace(/\\/g, '/')}`;
+          try {
+            const command = await import(filePath);
+            if ("data" in command && "execute" in command) {
+              this.client.commands.set(command.data.name, command);
+            } else {
+              console.log(
+                "\x1b[33m%s\x1b[0m",
+                `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`,
+              );
             }
+          } catch (error) {
+            console.error(`Error loading command from ${filePath}:`, error);
           }
         }
       }

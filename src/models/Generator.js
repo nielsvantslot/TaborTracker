@@ -1,5 +1,5 @@
-import StaticGeneratorDataManager from "../managers/StaticGeneratorDataManager.js";
-import generatorNotifier from "../managers/GeneratorNotifier.js";
+import StaticGeneratorDataManager from "../managers/generator/StaticGeneratorDataManager.js";
+import generatorNotifier from "../managers/generator/GeneratorNotifier.js";
 import discord from "../discord.js";
 import { EmbedBuilder } from "discord.js";
 

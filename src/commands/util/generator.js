@@ -5,7 +5,7 @@ import {
   EmbedBuilder,
   SlashCommandBuilder,
 } from "discord.js";
-import generatorManager from "../../managers/GeneratorManager.js";
+import generatorManager from "../../managers/generator/GeneratorManager.js";
 
 const commandData = new SlashCommandBuilder()
   .setName("generator")

@@ -4,8 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prod": "NODE_ENV=production node util/deploy-commands.js && NODE_ENV=production node index.js",
-    "dev": "NODE_ENV=development nodemon --ignore 'data' index.js",
+    "prod": "npm run prod:unix || npm run prod:win",
+    "prod:unix": "NODE_ENV=production node util/deploy-commands.js && NODE_ENV=production node index.js",
+    "prod:win": "set NODE_ENV=production && node util/deploy-commands.js && set NODE_ENV=production && node index.js",
+    "dev": "npm run dev:unix || npm run dev:win",
+    "dev:unix": "NODE_ENV=development nodemon --ignore 'data' index.js",
+    "dev:win": "set NODE_ENV=development && nodemon --ignore \"data\" index.js",
     "deploy": "node util/deploy-commands.js",
     "clean": "node util/delete-commands.js"
   },
