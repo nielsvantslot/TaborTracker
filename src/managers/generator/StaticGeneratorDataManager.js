@@ -3,8 +3,7 @@ import StaticDataManager from "../../managers/data/StaticDataManager.js";
 export default class StaticGeneratorDataManager {
   constructor() {
     this.staticDataManager = new StaticDataManager("generatorData.json");
-    this.generators = null;
-    this.loadGenerators();
+    this.generatorsPromise = this.loadGenerators();
   }
 
   async loadGenerators() {
@@ -16,12 +15,17 @@ export default class StaticGeneratorDataManager {
     }
   }
 
+  async waitForInitialization() {
+    await this.generatorsPromise;
+  }
+
   /**
    * Retrieves all generators.
    * @returns {Array} - Array of generator objects.
    */
-  getAllGenerators() {
-    return this.generators.map((generator) => ({
+  async getAllGenerators() {
+    await this.waitForInitialization();
+    return this.generators.generatorData.map((generator) => ({
       level: generator.level,
       hoursPerGasCan: generator.hoursPerGasCan,
     }));
@@ -32,8 +36,11 @@ export default class StaticGeneratorDataManager {
    * @param {number} level - The level of the generator.
    * @returns {Object|null} - The generator object, or null if not found.
    */
-  getGeneratorByLevel(level) {
-    return this.generators.find((generator) => generator.level === level);
+  async getGeneratorByLevel(level) {
+    await this.waitForInitialization();
+    return this.generators.generatorData.find(
+      (generator) => generator.level === level,
+    );
   }
 
   /**
@@ -41,8 +48,8 @@ export default class StaticGeneratorDataManager {
    * @param {number} level - The level of the generator.
    * @returns {number|null} - The hours per gas can, or null if not found.
    */
-  getHoursPerGasCanByLevel(level) {
-    const generator = this.getGeneratorByLevel(level);
+  async getHoursPerGasCanByLevel(level) {
+    const generator = await this.getGeneratorByLevel(level);
     return generator ? generator.hoursPerGasCan : null;
   }
 }

@@ -27,11 +27,13 @@ export default class Generator {
     }
   }
 
-  addFuel() {
-    this.fuel = Math.min(
-      this.data.getHoursPerGasCanByLevel(this.level) * 60 * 4,
-      this.fuel + this.data.getHoursPerGasCanByLevel(this.level) * 60,
-    );
+  async addFuel() {
+    const hoursPerGasCan = await this.data.getHoursPerGasCanByLevel(this.level);
+    if (hoursPerGasCan !== null) {
+      const fuelToAdd = hoursPerGasCan * 60;
+      const fuelCap = fuelToAdd * 4;
+      this.fuel = Math.min(this.fuel + fuelToAdd, fuelCap);
+    }
   }
 
   decreaseFuel(amount) {
@@ -44,14 +46,14 @@ export default class Generator {
     }
   }
 
-  upgradeLevel() {
-    const percentage = this.getFuelLevel() / 100;
+  async upgradeLevel() {
+    const percentage = (await this.getFuelLevel()) / 100;
     this.level = Math.min(this.level + 1, 3);
-    this.fuel = this._getMaxFuel() * percentage;
+    this.fuel = (await this._getMaxFuel()) * percentage;
   }
 
-  _getMaxFuel() {
-    return this.data.getHoursPerGasCanByLevel(this.level) * 60 * 4;
+  async _getMaxFuel() {
+    return (await this.data.getHoursPerGasCanByLevel(this.level)) * 60 * 4;
   }
 
   powerOff() {
@@ -77,8 +79,8 @@ export default class Generator {
     return this.fuel;
   }
 
-  getFuelLevel() {
-    return Math.floor((this.fuel / this._getMaxFuel()) * 100);
+  async getFuelLevel() {
+    return Math.floor((this.fuel / (await this._getMaxFuel())) * 100);
   }
 
   getLevel() {

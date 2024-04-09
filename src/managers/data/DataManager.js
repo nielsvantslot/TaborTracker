@@ -1,6 +1,6 @@
-import { promises as fs } from 'fs';
+import { promises as fs } from "fs";
 import { __dirname } from "../../utils.js";
-import path from 'path';
+import path from "path";
 
 export default class DataManager {
   /**
@@ -9,7 +9,7 @@ export default class DataManager {
    * @param {string} fileName - The name of the file.
    */
   constructor(directoryPath, fileName) {
-    this.filePath = `file://${path.resolve(__dirname, 'data', directoryPath, fileName).replace(/\\/g, '/')}`;
+    this.filePath = path.resolve(__dirname, "data", directoryPath, fileName);
     this.locked = false;
     this.initializeFile();
   }
@@ -31,10 +31,10 @@ export default class DataManager {
    */
   async readFromFile() {
     try {
-      const rawData = await fs.readFile(this.filePath, 'utf-8');
+      const rawData = await fs.readFile(this.filePath, "utf-8");
       return JSON.parse(rawData);
     } catch (error) {
-      console.error('Error reading from file:', error);
+      console.error("Error reading from file:", error);
       return null;
     }
   }
@@ -44,7 +44,7 @@ export default class DataManager {
    */
   async waitForUnlock() {
     while (this.locked) {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
   }
 }

@@ -15,7 +15,7 @@ async function execute(interaction) {
   try {
     const userId = interaction.user.id;
     const generator = generatorManager.getByUserId(userId);
-    const { ui, row } = generateUI(generator);
+    const { ui, row } = await generateUI(generator);
 
     const response = await interaction.reply({
       embeds: [ui],
@@ -50,14 +50,14 @@ async function handleConfirmation(interaction, response, generator) {
           generator.powerOff();
           break;
         case "addFuel":
-          generator.addFuel();
+          await generator.addFuel();
           break;
         case "upgradeLevel":
-          generator.upgradeLevel();
+          await generator.upgradeLevel();
           break;
       }
 
-      const { ui, row } = generateUI(generator);
+      const { ui, row } = await generateUI(generator);
       await confirmation.update({
         embeds: [ui],
         components: [row],
@@ -70,7 +70,7 @@ async function handleConfirmation(interaction, response, generator) {
   }
 }
 
-function generateUI(generator) {
+async function generateUI(generator) {
   const ui = new EmbedBuilder().setTitle("Generator").addFields(
     {
       name: "Generator status",
@@ -88,7 +88,11 @@ function generateUI(generator) {
       value: `${generator.getTimeLeft()} hours left`,
       inline: true,
     },
-    { name: "Fuel level", value: `${generator.getFuelLevel()}%`, inline: true },
+    {
+      name: "Fuel level",
+      value: `${await generator.getFuelLevel()}%`,
+      inline: true,
+    },
   );
 
   const bAddFuel = new ButtonBuilder()
