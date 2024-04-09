@@ -77,11 +77,13 @@ export class Discord {
 
       for (const folder of commandFolders) {
         const commandsPath = path.join(foldersPath, folder);
-        const unFilteredcommandFiles = await fs.promises.readdir(commandsPath)
-        const commandFiles = await unFilteredcommandFiles.filter((file) => file.endsWith(".js"));
+        const unFilteredcommandFiles = await fs.promises.readdir(commandsPath);
+        const commandFiles = unFilteredcommandFiles.filter((file) =>
+          file.endsWith(".js"),
+        );
 
         for (const file of commandFiles) {
-          const filePath = `file://${path.resolve(commandsPath, file).replace(/\\/g, '/')}`;
+          const filePath = `file://${path.resolve(commandsPath, file).replace(/\\/g, "/")}`;
           try {
             const command = await import(filePath);
             if ("data" in command && "execute" in command) {
