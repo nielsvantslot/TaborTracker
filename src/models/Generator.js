@@ -13,19 +13,25 @@ export default class Generator extends Saveable {
   /**
    * Create a Generator.
    * @param {string} uid - The user ID.
+   * @param {number} [fuel=0] - The initial fuel amount (optional, default is 0).
+   * @param {number} [level=1] - The initial level (optional, default is 1).
+   * @param {boolean} [powered=false] - The initial powered state (optional, default is false).
+   * @param {number} [lastUpdated=Date.now()] - The timestamp of last update (optional, default is current timestamp).
    */
-  constructor(uid) {
+  constructor(uid, fuel = 0, level = 1, powered = false, lastUpdated = Date.now()) {
     super();
     /** @type {StaticGeneratorDataManager} */
     this.data = new StaticGeneratorDataManager();
     /** @type {string} */
     this.userId = uid;
     /** @type {number} */
-    this.fuel = 0;
+    this.fuel = fuel;
     /** @type {number} */
-    this.level = 1;
+    this.level = level;
     /** @type {boolean} */
-    this.powered = false;
+    this.powered = powered;
+    /** @type {number} */
+    this.lastUpdated = lastUpdated;
     /** @type {function} */
     this.notify = this.notify.bind(this);
     // Wrap the methods that should trigger save
