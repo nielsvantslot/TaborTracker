@@ -10,7 +10,7 @@
     "dev": "set NODE_ENV=development && nodemon --ignore \"data\" index.js",
     "deploy": "node util/deploy-commands.js",
     "clean": "node util/delete-commands.js",
-    "test": "node --experimental-vm-modules ./node_modules/.bin/jest"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "author": "",
   "license": "ISC",
