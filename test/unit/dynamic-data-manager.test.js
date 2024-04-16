@@ -1,4 +1,6 @@
-import DynamicDataManager from "../../src/managers/data/DynamicDataManager.js";
+import DynamicDataManager, {
+  extension,
+} from "../../src/managers/data/DynamicDataManager.js";
 import { promises as fs } from "fs";
 import { __dirname } from "../../src/utils.js";
 
@@ -10,7 +12,7 @@ describe("DynamicDataManager", () => {
   // Before each test, set up the file paths
   beforeEach(() => {
     fileName = "dynamicTestFile";
-    filePath = `${__dirname}/data/dynamic/${fileName}.ldf`;
+    filePath = `${__dirname}/data/dynamic/${fileName + extension}`;
   });
 
   // After each test, delete the test file if it exists

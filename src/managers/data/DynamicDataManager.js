@@ -25,7 +25,12 @@ export default class DynamicDataManager extends DataManager {
    * @param {string} fileName - The name of the file.
    */
   constructor(fileName) {
-    super("dynamic", fileName);
+    fileName = ensureDdfExtension(fileName);
+    if (DynamicDataManager.#instances[fileName]) {
+      throw new Error("DONT use this constructor, try getInstance()");
+    }
+    super(directory, fileName);
+    DynamicDataManager.#instances[fileName] = this;
   }
 
   /**
@@ -34,13 +39,13 @@ export default class DynamicDataManager extends DataManager {
    * @returns {DynamicDataManager} The DynamicDataManager instance.
    */
   static getInstance(fileName) {
-    fileName += ".ldf";
-    if (!DynamicDataManager.#instances[fileName]) {
-      DynamicDataManager.#instances[fileName] = new DynamicDataManager(
+    fileName = ensureDdfExtension(fileName);
+    return (
+      DynamicDataManager.#instances[fileName] ??
+      (DynamicDataManager.#instances[fileName] = new DynamicDataManager(
         fileName,
-      );
-    }
-    return DynamicDataManager.#instances[fileName];
+      ))
+    );
   }
 
   /**
@@ -171,3 +176,8 @@ export default class DynamicDataManager extends DataManager {
     return DynamicDataManager.#instances;
   }
 }
+
+export const extension = ".ddf";
+export const directory = "dynamic";
+const ensureDdfExtension = (str) =>
+  str.endsWith(extension) ? str : str + extension;

@@ -1,10 +1,10 @@
-import DynamicDataManager from "./DynamicDataManager.js";
 import Generator from "../../models/Generator.js";
+import DynamicDataManager from "../data/DynamicDataManager.js";
 
 class GeneratorManager {
   constructor() {
     if (!GeneratorManager.instance) {
-      this.dataManager = new DynamicDataManager("generators.json");
+      this.dataManager = DynamicDataManager.getInstance("generators");
       GeneratorManager.instance = this;
     }
     return GeneratorManager.instance;
@@ -16,9 +16,8 @@ class GeneratorManager {
     return generator;
   }
 
-  async readAll() {
-    const generators = await this.readDataFromFile();
-    return Object.values(generators);
+  async getAll() {
+    return await this.dataManager.readAllRecords();
   }
 
   async update(id, newData) {
@@ -38,16 +37,6 @@ class GeneratorManager {
     }
     delete generators[id];
     await this.saveDataToFile(generators);
-  }
-
-  async readDataFromFile() {
-    await this.dataManager.initializeFile();
-    const data = await this.dataManager.getData();
-    return data || {};
-  }
-
-  async saveDataToFile(data) {
-    await this.dataManager.saveData(data);
   }
 }
 

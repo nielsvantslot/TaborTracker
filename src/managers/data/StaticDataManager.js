@@ -31,8 +31,13 @@ export default class StaticDataManager extends DataManager {
    * @param {string} fileName - The name of the file.
    */
   constructor(fileName) {
-    super("static", fileName);
+    fileName = ensureSdfExtension(fileName);
+    if (StaticDataManager.#instances[fileName]) {
+      throw new Error("DONT use this constructor, try getInstance()");
+    }
+    super(directory, fileName);
     this.#dataPromise;
+    StaticDataManager.#instances[fileName] = this;
   }
 
   /**
@@ -41,11 +46,11 @@ export default class StaticDataManager extends DataManager {
    * @returns {StaticDataManager} The DynamicDataManager instance.
    */
   static getInstance(fileName) {
-    fileName += ".sdf";
-    if (!StaticDataManager.#instances[fileName]) {
-      StaticDataManager.#instances[fileName] = new StaticDataManager(fileName);
-    }
-    return StaticDataManager.#instances[fileName];
+    fileName = ensureSdfExtension(fileName);
+    return (
+      StaticDataManager.#instances[fileName] ??
+      (StaticDataManager.#instances[fileName] = new StaticDataManager(fileName))
+    );
   }
 
   /**
@@ -90,3 +95,8 @@ export default class StaticDataManager extends DataManager {
     return StaticDataManager.#instances;
   }
 }
+
+export const extension = ".sdf";
+export const directory = "static";
+const ensureSdfExtension = (str) =>
+  str.endsWith(extension) ? str : str + extension;

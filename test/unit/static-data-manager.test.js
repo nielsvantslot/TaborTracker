@@ -1,4 +1,6 @@
-import StaticDataManager from "../../src/managers/data/StaticDataManager.js";
+import StaticDataManager, {
+  extension,
+} from "../../src/managers/data/StaticDataManager.js";
 import { promises as fs } from "fs";
 import { __dirname } from "../../src/utils.js";
 
@@ -10,7 +12,7 @@ describe("StaticDataManager", () => {
   // Before each test, set up the file paths
   beforeEach(() => {
     fileName = "staticTestFile";
-    filePath = `${__dirname}/data/static/${fileName}.sdf`;
+    filePath = `${__dirname}/data/static/${fileName + extension}`;
   });
 
   // After each test, delete the test file if it exists
