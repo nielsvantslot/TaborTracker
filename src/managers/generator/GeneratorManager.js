@@ -1,37 +1,57 @@
 import Generator from "../../models/Generator.js";
+import HashMap from "../../structs/Hashmap.js";
 import DynamicDataManager from "../data/DynamicDataManager.js";
 
 class GeneratorManager {
+  #dataManager;
+  #generators;
+
   constructor() {
     if (!GeneratorManager.instance) {
-      this.dataManager = DynamicDataManager.getInstance("generators");
+      this.#dataManager = DynamicDataManager.getInstance("generators");
+      this.#generators = new HashMap();
       GeneratorManager.instance = this;
     }
     return GeneratorManager.instance;
   }
 
-  async create(generatorData) {
-    const generator = new Generator(generatorData);
-    await this.saveGenerator(generator);
+  async getByUserId(uid) {
+    const res = await this.#dataManager.readRecord(uid);
+    let generator;
+    if (res) {
+      generator = new Generator(
+        res.userId,
+        res.fuel,
+        res.level,
+        res.powered,
+        res.lastUpdated,
+      );
+      this.#generators.put(uid, generator);
+    } else if (this.#generators.get(uid)) {
+      generator = this.#generators.get(uid);
+    } else {
+      generator = this.create(uid);
+    }
+    return generator;
+  }
+
+  async create(id) {
+    const generator = new Generator(id);
+    this.#generators.put(id, generator);
+    await this.#dataManager.createRecord(id, generator.serialize());
     return generator;
   }
 
   async getAll() {
-    return await this.dataManager.readAllRecords();
+    return await this.#dataManager.readAllRecords();
   }
 
-  async update(id, newData) {
-    const generators = await this.readDataFromFile();
-    if (!generators[id]) {
-      throw new Error("Generator not found");
-    }
-    generators[id].update(newData);
-    await this.saveDataToFile(generators);
-    return generators[id];
+  async update(id, generator) {
+    this.#dataManager.updateRecord(id, generator.serialize());
   }
 
   async delete(id) {
-    const generators = await this.readDataFromFile();
+    const generators = await this.#dataManager.readAllRecords();
     if (!generators[id]) {
       throw new Error("Generator not found");
     }

@@ -8,7 +8,7 @@ export default class StaticGeneratorDataManager {
    * Initializes the StaticGeneratorDataManager.
    */
   constructor() {
-    this.staticDataManager = new StaticDataManager("generatorData.json");
+    this.staticDataManager = StaticDataManager.getInstance("generatorData");
     this.generatorsPromise = this.loadGenerators();
   }
 

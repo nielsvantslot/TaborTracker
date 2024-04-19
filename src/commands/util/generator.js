@@ -14,7 +14,7 @@ const commandData = new SlashCommandBuilder()
 async function execute(interaction) {
   try {
     const userId = interaction.user.id;
-    const generator = generatorManager.getByUserId(userId);
+    const generator = await generatorManager.getByUserId(userId);
     const { ui, row } = await generateUI(generator);
 
     const response = await interaction.reply({

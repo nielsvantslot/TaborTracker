@@ -18,7 +18,13 @@ export default class Generator extends Saveable {
    * @param {boolean} [powered=false] - The initial powered state (optional, default is false).
    * @param {number} [lastUpdated=Date.now()] - The timestamp of last update (optional, default is current timestamp).
    */
-  constructor(uid, fuel = 0, level = 1, powered = false, lastUpdated = Date.now()) {
+  constructor(
+    uid,
+    fuel = 0,
+    level = 1,
+    powered = false,
+    lastUpdated = Date.now(),
+  ) {
     super();
     /** @type {StaticGeneratorDataManager} */
     this.data = new StaticGeneratorDataManager();
@@ -176,7 +182,7 @@ export default class Generator extends Saveable {
    * @returns {Promise<void>}
    */
   async save() {
-    await generatorManager.update(this.userId, this.serialize());
+    await generatorManager.update(this.userId, this);
   }
 
   /**

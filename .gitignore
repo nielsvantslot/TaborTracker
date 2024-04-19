@@ -6,6 +6,7 @@ node_modules/
 
 # Data
 data/dynamic/playerGraphData.json
+*.ddf
 
 # Logs
 logs
