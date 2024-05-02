@@ -1,3 +1,4 @@
+import Mutex from "../../models/Mutex.js";
 import DataManager from "./DataManager.js";
 import { promises as fs } from "fs";
 
@@ -7,18 +8,24 @@ import { promises as fs } from "fs";
  */
 export default class DynamicDataManager extends DataManager {
   /**
-   * Indicates if the data manager is locked.
-   * @type {boolean}
-   * @private
-   */
-  #locked = false;
-
-  /**
    * Instances of DynamicDataManager.
    * @type {Object}
    * @static
    */
   static #instances = {};
+
+  #filteredData;
+
+  #mutex;
+
+  static operators = {
+    "==": (a, b) => a === b,
+    "!=": (a, b) => a !== b,
+    ">": (a, b) => a > b,
+    "<": (a, b) => a < b,
+    ">=": (a, b) => a >= b,
+    "<=": (a, b) => a <= b,
+  };
 
   /**
    * Constructs a DynamicDataManager instance.
@@ -31,6 +38,7 @@ export default class DynamicDataManager extends DataManager {
     }
     super(directory, fileName);
     DynamicDataManager.#instances[fileName] = this;
+    this.#mutex = new Mutex();
   }
 
   /**
@@ -55,14 +63,13 @@ export default class DynamicDataManager extends DataManager {
    * @returns {Promise<void>} A promise that resolves when the record is created successfully.
    */
   async createRecord(key, value) {
-    await this.#waitForUnlock();
+    await this.#mutex.acquire();
     try {
-      this.#lock();
       const data = await this._readFromFile();
       data[key] = value;
       await this.#writeToFile(data);
     } finally {
-      this.#unlock();
+      this.#mutex.release();
     }
   }
 
@@ -76,12 +83,32 @@ export default class DynamicDataManager extends DataManager {
     return data[key] || null;
   }
 
+  async getWhere(property, operator, value) {
+    this.#filteredData = await this.readAllRecords();
+    this.#filteredData = Object.values(this.#filteredData).filter((item) =>
+      DynamicDataManager.operators[operator](item[property], value),
+    );
+
+    return this;
+  }
+
+  where(property, operator, value) {
+    this.#filteredData = Object.values(this.#filteredData).filter((item) =>
+      DynamicDataManager.operators[operator](item[property], value),
+    );
+    return this; // Return the instance for chaining
+  }
+
+  getResult() {
+    return this.#filteredData;
+  }
+
   /**
    * Reads all records from the data.
    * @returns {Promise<Object>} A promise that resolves with all records.
    */
   async readAllRecords() {
-    return this._readFromFile();
+    return await this._readFromFile();
   }
 
   /**
@@ -91,9 +118,8 @@ export default class DynamicDataManager extends DataManager {
    * @returns {Promise<void>} A promise that resolves when the record is updated successfully.
    */
   async updateRecord(key, value) {
-    await this.#waitForUnlock();
+    await this.#mutex.acquire();
     try {
-      this.#lock();
       const data = await this._readFromFile();
       if (data[key]) {
         data[key] = value;
@@ -102,7 +128,7 @@ export default class DynamicDataManager extends DataManager {
         throw new Error(`Record with key ${key} not found.`);
       }
     } finally {
-      this.#unlock();
+      this.#mutex.release();
     }
   }
 
@@ -112,9 +138,8 @@ export default class DynamicDataManager extends DataManager {
    * @returns {Promise<void>} A promise that resolves when the record is deleted successfully.
    */
   async deleteRecord(key) {
-    await this.#waitForUnlock();
+    await this.#mutex.acquire();
     try {
-      this.#lock();
       const data = await this._readFromFile();
       if (data[key]) {
         delete data[key];
@@ -123,7 +148,7 @@ export default class DynamicDataManager extends DataManager {
         throw new Error(`Record with key ${key} not found.`);
       }
     } finally {
-      this.#unlock();
+      this.#mutex.release();
     }
   }
 
@@ -135,33 +160,7 @@ export default class DynamicDataManager extends DataManager {
   async #writeToFile(data) {
     await this._ensureSource();
     await fs.writeFile(this._filePath, JSON.stringify(data));
-    console.log("Data saved successfully.");
-  }
-
-  /**
-   * Waits until the file is unlocked.
-   * @private
-   */
-  async #waitForUnlock() {
-    while (this.#locked) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-  }
-
-  /**
-   * Locks the data manager.
-   * @private
-   */
-  #lock() {
-    this.#locked = true;
-  }
-
-  /**
-   * Unlocks the data manager.
-   * @private
-   */
-  #unlock() {
-    this.#locked = false;
+    console.log(this._filePath, "Data saved successfully.");
   }
 
   /**

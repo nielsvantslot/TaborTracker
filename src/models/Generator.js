@@ -48,6 +48,23 @@ export default class Generator extends Saveable {
     this.powerOn = this.withSave(this.powerOn);
   }
 
+  static revive(instance) {
+    instance.fuel = Math.max(
+      0,
+      instance.fuel -
+        Math.floor((Date.now() - instance.lastUpdated) / (1000 * 60)),
+    );
+    const generator = new this(
+      instance.userId,
+      instance.fuel,
+      instance.level,
+      instance.powered,
+      instance.lastUpdated,
+    );
+    generator.powerOn();
+    return generator;
+  }
+
   /**
    * Notifies the user about the generator status.
    * @param {number} amount - The amount of fuel.
@@ -85,12 +102,9 @@ export default class Generator extends Saveable {
    * @param {number} amount - The amount to decrease.
    */
   decreaseFuel(amount) {
-    if (this.fuel > 0) {
-      this.fuel -= amount;
-      console.log(`${this.userId} fuel decreased to ${this.fuel}`);
-    } else {
+    this.fuel -= amount;
+    if (this.fuel < 1) {
       this.powerOff();
-      console.log(`${this.userId} has run out of fuel`);
     }
   }
 

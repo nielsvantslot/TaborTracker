@@ -15,6 +15,16 @@ class GeneratorManager {
     return GeneratorManager.instance;
   }
 
+  async start() {
+    const generators = (
+      await this.#dataManager.getWhere("powered", "==", true)
+    ).getResult();
+    for (const generator of generators) {
+      const newGenerator = Generator.revive(generator);
+      this.#generators.put(generator.userId, newGenerator);
+    }
+  }
+
   async getByUserId(uid) {
     const res = await this.#dataManager.readRecord(uid);
     let generator;
