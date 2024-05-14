@@ -1,16 +1,14 @@
 {
-  "data": [
-    {
-      "level": 1,
-      "hoursPerGasCan": 12
-    },
-    {
-      "level": 2,
-      "hoursPerGasCan": 18
-    },
-    {
-      "level": 3,
-      "hoursPerGasCan": 24
-    }
-  ]
+  "1": {
+    "level": 1,
+    "hoursPerGasCan": 12
+  },
+  "2": {
+    "level": 2,
+    "hoursPerGasCan": 18
+  },
+  "3": {
+    "level": 3,
+    "hoursPerGasCan": 24
+  }
 }

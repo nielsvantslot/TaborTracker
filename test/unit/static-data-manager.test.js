@@ -58,5 +58,11 @@ describe("StaticDataManager", () => {
 
       expect(retrievedData).toEqual(testData);
     });
+
+    it("should return an empty object if the data file was just created", async () => {
+      const dataManager = StaticDataManager.getInstance(fileName);
+      const retrievedData = await dataManager.getData();
+      expect(retrievedData).toEqual({});
+    });
   });
 });

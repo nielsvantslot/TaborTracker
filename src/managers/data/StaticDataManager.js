@@ -6,13 +6,6 @@ import DataManager from "./DataManager.js";
  */
 export default class StaticDataManager extends DataManager {
   /**
-   * A promise for data initialization.
-   * @type {Promise<void>}
-   * @private
-   */
-  #dataPromise;
-
-  /**
    * The data held by the StaticDataManager.
    * @type {Object|null}
    * @private
@@ -36,7 +29,7 @@ export default class StaticDataManager extends DataManager {
       throw new Error("DONT use this constructor, try getInstance()");
     }
     super(directory, fileName);
-    this.#dataPromise;
+    this.#data = null;
     StaticDataManager.#instances[fileName] = this;
   }
 
@@ -54,33 +47,15 @@ export default class StaticDataManager extends DataManager {
   }
 
   /**
-   * Retrieves data from the file.
-   * @returns {Object|null} - The data read from the file, or null if an error occurs.
+   * Retrieves the data from the file.
+   * @returns {Object|null} The data from the file, or null if an error occurs.
    */
   async getData() {
-    await this._ensureData();
-    return this.#data;
-  }
-
-  /**
-   * Loads the data asynchronously.
-   * @returns {Promise<void>} A promise that resolves when the data is loaded.
-   */
-  async #loadData() {
-    try {
+    if (!this.#data) {
+      console.error("read static data");
       this.#data = await this._readFromFile();
-    } catch (error) {
-      console.error("Error loading data:", error);
-      this.#data = null;
     }
-  }
-
-  /**
-   * Waits for the initialization of data.
-   * @returns {Promise<void>} A promise that resolves when the data is initialized.
-   */
-  async _ensureData() {
-    this.#dataPromise = await this.#loadData();
+    return this.#data;
   }
 
   /**
@@ -90,13 +65,12 @@ export default class StaticDataManager extends DataManager {
   static resetInstances() {
     StaticDataManager.#instances = {};
   }
-
-  static getInstances() {
-    return StaticDataManager.#instances;
-  }
 }
 
-export const extension = ".sdf";
-export const directory = "static";
+// Utility function to ensure the file extension is correct
 const ensureSdfExtension = (str) =>
   str.endsWith(extension) ? str : str + extension;
+
+// Constants for file extension and directory
+export const extension = ".sdf";
+export const directory = "static";
