@@ -49,11 +49,14 @@ export default class Generator extends Saveable {
   }
 
   static revive(instance) {
-    instance.fuel = Math.max(
-      0,
-      instance.fuel -
-        Math.floor((Date.now() - instance.lastUpdated) / (1000 * 60)),
-    );
+    const elapsedTime = Date.now() - instance.lastUpdated;
+    const fuelConsumed = Math.floor(elapsedTime / (1000 * 60));
+    instance.fuel = Math.max(0, instance.fuel - fuelConsumed);
+
+    if (instance.fuel < 1) {
+      instance.powered = false;
+    }
+
     const generator = new this(
       instance.userId,
       instance.fuel,
