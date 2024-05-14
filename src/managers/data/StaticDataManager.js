@@ -52,7 +52,6 @@ export default class StaticDataManager extends DataManager {
    */
   async getData() {
     if (!this.#data) {
-      console.error("read static data");
       this.#data = await this._readFromFile();
     }
     return this.#data;
