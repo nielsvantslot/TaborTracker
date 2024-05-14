@@ -40,4 +40,20 @@ export default class StaticGeneratorDataManager {
     const generator = await this.getGeneratorByLevel(level);
     return generator ? generator.hoursPerGasCan : null;
   }
+
+  async getMaxLevel() {
+    const data = await this.getAllGenerators();
+    let highestLevel = 0;
+
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        const level = data[key].level;
+        if (level > highestLevel) {
+          highestLevel = level;
+        }
+      }
+    }
+
+    return highestLevel;
+  }
 }

@@ -182,6 +182,12 @@ export default class Generator extends Saveable {
     return this.level;
   }
 
+  async isMaxLevel() {
+    console.log("this", this.level);
+    console.log("data", await this.data.getMaxLevel());
+    return this.level === (await this.data.getMaxLevel());
+  }
+
   /**
    * Gets the time left until the generator runs out of fuel.
    * @returns {number} The time left in hours.

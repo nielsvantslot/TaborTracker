@@ -105,17 +105,24 @@ async function generateUI(generator) {
   const powerButtonStyle = generator.isPowered()
     ? ButtonStyle.Danger
     : ButtonStyle.Success;
+
   const bPower = new ButtonBuilder()
     .setCustomId(powerButtonId)
     .setLabel(powerButtonLabel)
     .setStyle(powerButtonStyle);
 
-  const bUpgrade = new ButtonBuilder()
-    .setCustomId("upgradeLevel")
-    .setLabel("Upgrade generator")
-    .setStyle(ButtonStyle.Secondary);
+  const bUpgrade = (await generator.isMaxLevel())
+    ? null
+    : new ButtonBuilder()
+        .setCustomId("upgradeLevel")
+        .setLabel("Upgrade generator")
+        .setStyle(ButtonStyle.Secondary);
 
-  const row = new ActionRowBuilder().addComponents(bAddFuel, bPower, bUpgrade);
+  const components = [bAddFuel, bPower, bUpgrade].filter(
+    (component) => component !== null,
+  );
+
+  const row = new ActionRowBuilder().addComponents(...components);
 
   return { ui, row };
 }
