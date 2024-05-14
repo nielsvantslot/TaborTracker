@@ -183,8 +183,6 @@ export default class Generator extends Saveable {
   }
 
   async isMaxLevel() {
-    console.log("this", this.level);
-    console.log("data", await this.data.getMaxLevel());
     return this.level === (await this.data.getMaxLevel());
   }
 
