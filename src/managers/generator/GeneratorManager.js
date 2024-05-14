@@ -28,6 +28,7 @@ class GeneratorManager {
   async getByUserId(uid) {
     const res = await this.#dataManager.readRecord(uid);
     let generator;
+
     if (res) {
       generator = new Generator(
         res.userId,
@@ -42,6 +43,7 @@ class GeneratorManager {
     } else {
       generator = this.create(uid);
     }
+
     return generator;
   }
 
@@ -61,12 +63,8 @@ class GeneratorManager {
   }
 
   async delete(id) {
-    const generators = await this.#dataManager.readAllRecords();
-    if (!generators[id]) {
-      throw new Error("Generator not found");
-    }
-    delete generators[id];
-    await this.saveDataToFile(generators);
+    this.#generators.remove(id);
+    await this.#dataManager.deleteRecord(id);
   }
 }
 
