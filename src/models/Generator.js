@@ -53,10 +53,6 @@ export default class Generator extends Saveable {
     const fuelConsumed = Math.floor(elapsedTime / (1000 * 60));
     instance.fuel = Math.max(0, instance.fuel - fuelConsumed);
 
-    if (instance.fuel < 1) {
-      instance.powered = false;
-    }
-
     const generator = new this(
       instance.userId,
       instance.fuel,
@@ -141,7 +137,7 @@ export default class Generator extends Saveable {
    * Powers on the generator.
    */
   powerOn() {
-    if (this.fuel < 1) return;
+    if (this.fuel < 1) return (this.powered = false);
     generatorNotifier.subscribe(this.notify);
     this.powered = true;
   }
