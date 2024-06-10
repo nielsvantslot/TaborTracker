@@ -1,18 +1,20 @@
 import { Client, Collection, Events, GatewayIntentBits } from "discord.js";
 import fs from "fs";
 import path from "node:path";
-import { discordToken } from "../util/constants.js";
-import { PlayerGraphManager } from "./managers/PlayerGraphManager.js";
+import { discordToken, refreshRate } from "../util/constants.js";
+import PlayerGraphManager from "./managers/playerGraph/PlayerGraphManager.js";
 import { __dirname } from "./utils.js";
 import generatorNotifier from "./managers/generator/GeneratorNotifier.js";
 import generatorManager from "./managers/generator/GeneratorManager.js";
+import { PlayerCountScraper } from "./utils/scrapers/PlayercountScraper.js";
 
 export class Discord {
   constructor() {
     if (!Discord.instance) {
       this.client = new Client({ intents: [GatewayIntentBits.Guilds] });
       this.client.commands = new Collection();
-      this.playerGraph = new PlayerGraphManager();
+      this.playerManager = new PlayerGraphManager();
+      this.playerScraper = new PlayerCountScraper();
       Discord.instance = this;
     }
     return Discord.instance;
@@ -26,18 +28,27 @@ export class Discord {
     await this.loadCommands();
     this.client.on("ready", () => {
       console.log("\x1b[32m%s\x1b[0m", `Logged in as ${this.client.user.tag}!`);
-
-      this.playerGraph.run();
     });
 
     this.client.login(discordToken);
     this.handleCommands();
     generatorManager.start();
-    setInterval(this.publishNotification, 60000);
+
+    setInterval(() => {
+      this.publishNotification();
+      this.scrapeAndPublish();
+    }, refreshRate);
   }
 
   publishNotification() {
     generatorNotifier.publish(1);
+  }
+
+  async scrapeAndPublish() {
+    const data = await this.playerScraper.getPlayersOnline();
+    if (!data) return;
+    this.playerManager.createNode(data.time, data.playerCount);
+    await this.playerManager.generateAndDisplayGraph();
   }
 
   handleCommands() {

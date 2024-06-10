@@ -1,4 +1,4 @@
-import Mutex from "../../models/Mutex.js";
+import Mutex from "../../structs/Mutex.js";
 import DataManager from "./DataManager.js";
 import { promises as fs } from "fs";
 

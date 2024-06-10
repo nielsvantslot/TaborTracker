@@ -1,4 +1,4 @@
-import Notifier from "../../structs/Notifier.js";
+import Notifier from "../../utils/events/Notifier.js";
 
 const instance = new Notifier();
 

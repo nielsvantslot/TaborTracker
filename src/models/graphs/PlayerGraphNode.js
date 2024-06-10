@@ -1,4 +1,5 @@
-import Saveable from "./Saveable.js";
+import PlayerGraphManger from "../../managers/playerGraph/PlayerGraphManager.js";
+import Saveable from "../abstracts/Saveable.js";
 
 /**
  * Represents a node in the player graph with time and player count information.
@@ -16,6 +17,7 @@ export default class PlayerGraphNode extends Saveable {
     super();
     this.#time = time;
     this.#playerCount = playerCount;
+    this.save();
   }
 
   /**
@@ -55,9 +57,7 @@ export default class PlayerGraphNode extends Saveable {
    * @returns {Promise<void>} A promise that resolves when the data is saved.
    */
   async save() {
-    // Implement save logic here
-    console.log("Saving player graph node data...");
-    // Example: Save to database or file
+    PlayerGraphManger.getInstance().addData(this.#time, this);
   }
 
   /**

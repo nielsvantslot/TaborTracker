@@ -1,4 +1,4 @@
-import Generator from "../../models/Generator.js";
+import Generator from "../../models/generators/Generator.js";
 import HashMap from "../../structs/Hashmap.js";
 import DynamicDataManager from "../data/DynamicDataManager.js";
 
