@@ -1,27 +1,34 @@
 export default class Notifier {
   constructor() {
-    this.subscribers = [];
+    this.subscribers = new Set();
   }
 
   subscribe(subscriber) {
     if (typeof subscriber !== "function") {
       throw new Error(
-        `${typeof subscriber} is not a valid argument for subscribe method, expected a function instead`,
+        `${typeof subscriber} is not a valid argument for the subscribe method, expected a function instead`,
       );
     }
-    this.subscribers = [...this.subscribers, subscriber];
+    this.subscribers.add(subscriber);
   }
 
   unsubscribe(subscriber) {
     if (typeof subscriber !== "function") {
       throw new Error(
-        `${typeof subscriber} is not a valid argument for unsubscribe method, expected a function instead`,
+        `${typeof subscriber} is not a valid argument for the unsubscribe method, expected a function instead`,
       );
     }
-    this.subscribers = this.subscribers.filter((sub) => sub !== subscriber);
+    this.subscribers.delete(subscriber);
   }
 
   publish(payload) {
-    this.subscribers.forEach((subscriber) => subscriber(payload));
+    const subscribers = Array.from(this.subscribers);
+    for (let i = 0; i < subscribers.length; i++) {
+      Promise.resolve().then(() => subscribers[i](payload));
+    }
+  }
+
+  clear() {
+    this.subscribers.clear();
   }
 }
