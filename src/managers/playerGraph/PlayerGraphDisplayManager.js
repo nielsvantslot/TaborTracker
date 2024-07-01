@@ -8,10 +8,14 @@ export default class PlayerGraphDisplay {
 
   #currentMessage;
 
-  constructor(graph, currentPlayerCount) {
+  constructor(graph, currentPlayerCount, currentMessage) {
     this.#graph = graph;
     this.#currentPlayerCount = currentPlayerCount;
-    this.#currentMessage;
+    this.#currentMessage = currentMessage;
+  }
+
+  getMessageId() {
+    return this.#currentMessage;
   }
 
   async displayGraph() {

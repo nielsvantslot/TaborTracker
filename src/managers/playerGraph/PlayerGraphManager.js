@@ -6,6 +6,7 @@ import PlayerGraphDisplay from "./PlayerGraphDisplayManager.js";
 
 export default class PlayerGraphManger {
   #dataManager;
+  #currenMessage
 
   static #instance;
 
@@ -28,8 +29,10 @@ export default class PlayerGraphManger {
     const graph = await this.#generateGraph();
     const playerCount = await this.#getCurrentPlayerCount();
     if (!graph || !playerCount) return;
-    const view = new PlayerGraphDisplay(graph, playerCount);
+    const currentMessage = this.#currenMessage ?? null;
+    const view = new PlayerGraphDisplay(graph, playerCount, currentMessage);
     await view.displayGraph();
+    this.#currenMessage = view.getMessageId();
   }
 
   async #generateGraph() {

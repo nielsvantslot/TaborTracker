@@ -25,33 +25,42 @@ export class Discord {
   }
 
   async run() {
-    await this.loadCommands();
-    this.client.on("ready", () => {
-      console.log("\x1b[32m%s\x1b[0m", `Logged in as ${this.client.user.tag}!`);
-    });
-
+    await this.#loadCommands();
     this.client.login(discordToken);
-    this.handleCommands();
+    await this.#waitForClientReady();
+
+    this.#handleCommands();
     generatorManager.start();
 
+    await this.playerManager.generateAndDisplayGraph();
+
     setInterval(() => {
-      this.publishNotification();
-      this.scrapeAndPublish();
+      this.#publishNotification();
+      this.#scrapeAndPublishGraph();
     }, refreshRate);
   }
 
-  publishNotification() {
+  #waitForClientReady() {
+    return new Promise((resolve) => {
+      this.client.once("ready", () => {
+        console.log("\x1b[32m%s\x1b[0m", `Logged in as ${this.client.user.tag}!`);
+        resolve();
+      });
+    });
+  }
+
+  #publishNotification() {
     generatorNotifier.publish(1);
   }
 
-  async scrapeAndPublish() {
+  async #scrapeAndPublishGraph() {
     const data = await this.playerScraper.getPlayersOnline();
     if (!data) return;
     this.playerManager.createNode(data.time, data.playerCount);
     await this.playerManager.generateAndDisplayGraph();
   }
 
-  handleCommands() {
+  #handleCommands() {
     this.client.on(Events.InteractionCreate, async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
 
@@ -83,7 +92,7 @@ export class Discord {
     });
   }
 
-  async loadCommands() {
+  async #loadCommands() {
     const foldersPath = path.join(__dirname, "src/commands");
     try {
       const commandFolders = await fs.promises.readdir(foldersPath);
