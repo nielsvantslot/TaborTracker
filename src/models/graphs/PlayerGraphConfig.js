@@ -1,4 +1,4 @@
-import Saveable from "../abstracts/Saveable";
+import Saveable from "../abstracts/Saveable.js";
 
 export default class PlayerGraphConfig extends Saveable {
 
@@ -10,6 +10,7 @@ export default class PlayerGraphConfig extends Saveable {
     super();
     this.#guildId = guildId;
     this.#channelId = channelId;
+    this.#messageId = null;
   }
 
   getGuildId() {

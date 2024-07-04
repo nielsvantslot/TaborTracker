@@ -1,6 +1,10 @@
+import PlayerGraphConfig from "../../models/graphs/PlayerGraphConfig.js";
+import HashMap from "../../structs/Hashmap.js";
+import DynamicDataManager from "../data/DynamicDataManager.js";
+
 export default class PlayerGraphConfigManager {
   #dataManager
-  #generators;
+  #configs;
 
   static #instance
 
@@ -10,14 +14,35 @@ export default class PlayerGraphConfigManager {
     }
     PlayerGraphConfigManager.#instance = this;
     this.#dataManager = DynamicDataManager.getInstance("playerGraphConfig");
-    this.#generators = new HashMap();
+    this.#configs = new HashMap();
   }
 
   static getInstance() {
     return (
-      PlayerGraphManger.#instance ??
-      (PlayerGraphManger.#instance = new PlayerGraphManger())
+      PlayerGraphConfigManager.#instance ??
+      (PlayerGraphConfigManager.#instance = new PlayerGraphConfigManager())
     );
+  }
+
+  async addOrUpdate(guildId, channelId) {
+    const res = await this.#dataManager.readRecord(guildId);
+    let config;
+
+    if (res) {
+      config = new PlayerGraphConfig(guildId, channelId);
+      this.#configs.put(guildId, config);
+    } else if (this.#configs.get(guildId)) {
+      this.#configs.get(guildId);
+    } else {
+      this.create(guildId, channelId);
+    }
+  }
+
+  async create(guildId, channelId) {
+    const config = new PlayerGraphConfig(guildId, channelId);
+    this.#configs.put(guildId, config);
+    await this.#dataManager.createRecord(guildId, config.serialize());
+    return config;
   }
 
   async getAllConfigs() {
