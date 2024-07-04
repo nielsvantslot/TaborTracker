@@ -41,8 +41,48 @@ function jsonToTable(json) {
   console.table(tableData);
 }
 
+
+const listFiles = async () => {
+  const directories = ['/data/dynamic', '/data/static'];
+  const results = {};
+
+  for (const dir of directories) {
+    try {
+      const fullPath = path.join(__dirname, dir);
+      const files = fs.readdirSync(fullPath);
+      const filteredFiles = files.filter(file => file.endsWith('.ddf') || file.endsWith('.sdf'));
+      results[dir] = filteredFiles;
+    } catch (err) {
+      console.error(`Unable to read directory ${path.join(__dirname, dir)}: ${err.message}`);
+      results[dir] = null;
+    }
+  }
+
+  for (const [dir, files] of Object.entries(results)) {
+    if (files) {
+      console.log(`Directory: ${dir}`);
+      if (files.length > 0) {
+        files.forEach(file => console.log(`  - ${file}`));
+      } else {
+        console.log("  No .ddf or .sdf files found.");
+      }
+      console.log(""); // Extra newline for better spacing
+    } else {
+      console.log(`Failed to read directory: ${dir}`);
+      console.log(""); // Extra newline for better spacing
+    }
+  }
+
+  process.exit(1);
+};
+
 // Get the filename from command line arguments
 const args = process.argv.slice(2);
+
+if(args.length <= 0) {
+  listFiles();
+}
+
 const filename = args[0];
 
 if (!filename) {
