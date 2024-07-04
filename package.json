@@ -9,10 +9,13 @@
   },
   "scripts": {
     "prod": "npm run prod:unix || npm run prod:win",
-    "prod:unix": "NODE_ENV=production node util/deploy-commands.js && NODE_ENV=production node index.js",
-    "prod:win": "set NODE_ENV=production && node util/deploy-commands.js && set NODE_ENV=production && node index.js",
-    "dev": "set NODE_ENV=development && nodemon --ignore \"data\" index.js",
+    "prod:unix": "NODE_ENV=production node util/deploy-commands-public.js && NODE_ENV=production node index.js",
+    "prod:win": "set NODE_ENV=production && node util/deploy-commands-public.js && set NODE_ENV=production && node index.js",
+    "dev": "nodemon --ignore \"data\" index.js",
     "deploy": "node util/deploy-commands.js",
+    "deploy-public": "npm run dep-pub:unix || npm run dep-pub:win",
+    "dep-pub:unix": "NODE_ENV=production node util/deploy-commands-public.js",
+    "dep-pub:win": "set NODE_ENV=production && node util/deploy-commands-public.js",
     "clean": "node util/delete-commands.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
