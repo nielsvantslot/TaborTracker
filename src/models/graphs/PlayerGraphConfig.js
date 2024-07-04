@@ -1,3 +1,4 @@
+import PlayerGraphConfigManager from "../../managers/playerGraph/PlayerGraphConfigManager.js";
 import Saveable from "../abstracts/Saveable.js";
 
 export default class PlayerGraphConfig extends Saveable {
@@ -6,11 +7,14 @@ export default class PlayerGraphConfig extends Saveable {
   #channelId;
   #messageId
 
-  constructor(guildId, channelId) {
+  constructor(guildId, channelId, messageId = null) {
     super();
     this.#guildId = guildId;
     this.#channelId = channelId;
-    this.#messageId = null;
+    this.#messageId = messageId;
+
+    this.setChannelId = this.withSave(this.setChannelId);
+    this.setMessageId = this.withSave(this.setMessageId);
   }
 
   getGuildId() {
@@ -31,6 +35,23 @@ export default class PlayerGraphConfig extends Saveable {
 
   setMessageId(messageId) {
     this.#messageId = messageId;
+  }
+
+  static revive(instance) {
+    const config = new this(
+      instance.guildId,
+      instance.channelId,
+      instance.messageId,
+    );
+    return config;
+  }
+
+  /**
+   * Saves the generator data.
+   * @returns {Promise<void>}
+   */
+  async save() {
+    await PlayerGraphConfigManager.getInstance().update(this.#guildId, this);
   }
 
   /**

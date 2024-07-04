@@ -27,15 +27,21 @@ export default class PlayerGraphConfigManager {
   async addOrUpdate(guildId, channelId) {
     const res = await this.#dataManager.readRecord(guildId);
     let config;
-
-    if (res) {
-      config = new PlayerGraphConfig(guildId, channelId);
+    if (this.#configs.get(guildId)) {
+      config = this.#configs.get(guildId);
+      config.setChannelId(channelId);
+    }
+    else if (res) {
+      config = PlayerGraphConfig.revive(res);
+      config.setChannelId(channelId);
       this.#configs.put(guildId, config);
-    } else if (this.#configs.get(guildId)) {
-      this.#configs.get(guildId);
     } else {
       this.create(guildId, channelId);
     }
+  }
+
+  async update(id, config) {
+    this.#dataManager.updateRecord(id, config.serialize());
   }
 
   async create(guildId, channelId) {
