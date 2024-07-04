@@ -1,5 +1,6 @@
 import Discord from "../../discord.js";
 import { channelId, roleId } from "../../../util/constants.js";
+import PlayerGraphConfigManager from "./PlayerGraphConfigManager.js";
 
 export default class PlayerGraphDisplay {
   #graph;
@@ -28,25 +29,35 @@ export default class PlayerGraphDisplay {
   }
 
   async #reviseMessage(message) {
-    try {
-      if (this.#currentMessage) {
-        await this.#editCurrentMessage(message);
-      } else {
-        await this.#sendNewMessage(message);
+    const configs = await PlayerGraphConfigManager.getInstance().getAll();
+    for (const config of configs) {
+      try {
+        if (config.getMessageId() != null) {
+          await this.#editCurrentMessage(config, message);
+        } else {
+          await this.#sendNewMessage(config, message);
+        }
+      } catch (error) {
+        console.error("Error sending message:", error);
       }
-    } catch (error) {
-      console.error("Error sending message:", error);
     }
   }
 
-  async #editCurrentMessage(message) {
-    await this.#currentMessage.edit(message);
+  async #editCurrentMessage(config, message) {
+    try {
+      const channel = Discord.getClient().channels.cache.get(config.getChannelId());
+      const orig = await channel.messages.fetch(config.getMessageId());
+      await orig.edit(message);
+    } catch (error) {
+      this.#sendNewMessage(config, message);
+    }
   }
 
-  async #sendNewMessage(message) {
-    const channel = Discord.getClient().channels.cache.get(channelId);
+  async #sendNewMessage(config, message) {
+    const channel = Discord.getClient().channels.cache.get(config.getChannelId());
     if (!channel) throw new Error("Channel not found.");
 
-    this.#currentMessage = await channel.send(message);
+    const res = await channel.send(message);
+    config.setMessageId(res.id);
   }
 }

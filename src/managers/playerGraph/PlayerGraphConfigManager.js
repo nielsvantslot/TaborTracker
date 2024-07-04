@@ -40,6 +40,16 @@ export default class PlayerGraphConfigManager {
     }
   }
 
+  async getAll() {
+    const configData = await this.#dataManager.readAllRecords();
+    const configs = []
+
+    for (const config in configData) {
+      configs.push(PlayerGraphConfig.revive(configData[config]))
+    }
+    return configs;
+  }
+
   async update(id, config) {
     this.#dataManager.updateRecord(id, config.serialize());
   }

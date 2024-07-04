@@ -27,6 +27,7 @@ export default class PlayerGraphConfig extends Saveable {
 
   setChannelId(channelId) {
     this.#channelId = channelId;
+    this.#messageId = null;
   }
 
   getMessageId() {
