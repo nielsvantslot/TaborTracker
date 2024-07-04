@@ -17,7 +17,8 @@
     "dep-pub:unix": "NODE_ENV=production node util/deploy-commands-public.js",
     "dep-pub:win": "set NODE_ENV=production && node util/deploy-commands-public.js",
     "clean": "node util/delete-commands.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "view": "node util/viewData.js"
   },
   "author": "",
   "license": "ISC",
