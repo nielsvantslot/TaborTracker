@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "prod": "npm run prod:unix || npm run prod:win",
@@ -18,7 +18,8 @@
     "dep-pub:win": "set NODE_ENV=production && node util/deploy-commands-public.js",
     "clean": "node util/delete-commands.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "view": "node util/viewData.js"
+    "view": "node util/viewData.js",
+    "watch": "node util/watchData.js"
   },
   "author": "",
   "license": "ISC",
