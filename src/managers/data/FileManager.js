@@ -106,7 +106,7 @@ export default class FileManager {
       if (json.hasOwnProperty(key)) {
         const row = json[key];
         Object.keys(row).forEach(column => {
-          const columnView = key === row[column] ? column + "*" : column;
+          const columnView = String(key) === String(row[column]) ? column + "*" : column;
           columnsView.add(columnView);
           columns.add(column);
         });
@@ -124,7 +124,11 @@ export default class FileManager {
         const tableRow = {};
         let i = 0;
         columnsArray.forEach(column => {
-          tableRow[columnsViewArray[i]] = row[column] !== undefined ? row[column] : null;
+          if (isTimestamp(row[column])) {
+              tableRow[columnsViewArray[i]] = timestampToDateTime(row[column]);
+          } else {
+              tableRow[columnsViewArray[i]] = row[column] !== undefined ? row[column] : null;
+          }
           i++;
         });
         tableData.push(tableRow);
@@ -134,4 +138,19 @@ export default class FileManager {
     // Log table to console
     console.table(tableData);
   }
+}
+
+// Helper functions for timestamp handling
+
+// Function to check if a value is a timestamp
+function isTimestamp(value) {
+  if (!value || value == null) return;
+    const timestampRegex = /^\d{10,13}$/; // Matches 10 to 13 digits (milliseconds timestamp)
+    return timestampRegex.test(value.toString());
+}
+
+// Function to convert a timestamp to a date-time string
+function timestampToDateTime(timestamp) {
+    let date = new Date(parseInt(timestamp, 10));
+    return date.toLocaleString(); // Adjust locale and options as needed
 }

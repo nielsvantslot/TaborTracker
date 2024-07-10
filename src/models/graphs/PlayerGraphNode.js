@@ -17,7 +17,6 @@ export default class PlayerGraphNode extends Saveable {
     super();
     this.#time = time;
     this.#playerCount = playerCount;
-    this.save();
   }
 
   /**
@@ -57,7 +56,7 @@ export default class PlayerGraphNode extends Saveable {
    * @returns {Promise<void>} A promise that resolves when the data is saved.
    */
   async save() {
-    PlayerGraphManger.getInstance().addData(this.#time, this);
+    await PlayerGraphManger.getInstance().addData(this.#time, this);
   }
 
   /**

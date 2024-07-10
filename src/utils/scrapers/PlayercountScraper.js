@@ -40,11 +40,10 @@ export class PlayerCountScraper {
       }
 
       this.previousPlayersOnline = playersOnline;
-      const currentTime = await getCurrentTime();
 
       return {
         playerCount: playersOnline,
-        time: currentTime,
+        time: Date.now(),
       };
     } catch (error) {
       console.error("Error processing data: " + error.message);

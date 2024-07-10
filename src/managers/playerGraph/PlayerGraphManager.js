@@ -6,7 +6,6 @@ import PlayerGraphDisplay from "./PlayerGraphDisplayManager.js";
 
 export default class PlayerGraphManger {
   #dataManager;
-  #currenMessage
 
   static #instance;
 
@@ -29,10 +28,8 @@ export default class PlayerGraphManger {
     const graph = await this.#generateGraph();
     const playerCount = await this.#getCurrentPlayerCount();
     if (!graph || !playerCount) return;
-    const currentMessage = this.#currenMessage ?? null;
-    const view = new PlayerGraphDisplay(graph, playerCount, currentMessage);
+    const view = new PlayerGraphDisplay(graph, playerCount);
     await view.displayGraph();
-    this.#currenMessage = view.getMessageId();
   }
 
   async #generateGraph() {
@@ -53,8 +50,9 @@ export default class PlayerGraphManger {
     return nodes[lastKey].playerCount;
   }
 
-  createNode(time, playerCount) {
-    new PlayerGraphNode(time, playerCount);
+  async createNode(time, playerCount) {
+    const node = new PlayerGraphNode(time, playerCount);
+    await node.save();
   }
 
   async getAll() {
@@ -66,7 +64,13 @@ export default class PlayerGraphManger {
     const dataArray = Object.values(data);
     const filteredData = dataArray.filter((node) => node.playerCount !== null);
 
-    const timestamps = filteredData.map((node) => node.time);
+    const timestamps = filteredData.map((node) => {
+      const date = new Date(node.time);
+      return [
+        date.getHours().toString().padStart(2, '0'),
+        date.getMinutes().toString().padStart(2, '0')
+      ].join(':');
+    });
     const playerCounts = filteredData.map((node) => node.playerCount);
     return {
       times: timestamps,

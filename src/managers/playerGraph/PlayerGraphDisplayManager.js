@@ -1,5 +1,5 @@
+import { roleId } from "../../../util/constants.js";
 import Discord from "../../discord.js";
-import { channelId, roleId } from "../../../util/constants.js";
 import PlayerGraphConfigManager from "./PlayerGraphConfigManager.js";
 
 export default class PlayerGraphDisplay {
@@ -7,16 +7,9 @@ export default class PlayerGraphDisplay {
 
   #currentPlayerCount;
 
-  #currentMessage;
-
-  constructor(graph, currentPlayerCount, currentMessage) {
+  constructor(graph, currentPlayerCount) {
     this.#graph = graph;
     this.#currentPlayerCount = currentPlayerCount;
-    this.#currentMessage = currentMessage;
-  }
-
-  getMessageId() {
-    return this.#currentMessage;
   }
 
   async displayGraph() {
@@ -29,17 +22,24 @@ export default class PlayerGraphDisplay {
   }
 
   async #reviseMessage(message) {
-    const configs = await PlayerGraphConfigManager.getInstance().getAll();
-    for (const config of configs) {
-      try {
-        if (config.getMessageId() != null) {
-          await this.#editCurrentMessage(config, message);
-        } else {
-          await this.#sendNewMessage(config, message);
+    try {
+      const configs = await PlayerGraphConfigManager.getInstance().getAll();
+
+      const promises = configs.map(async (config) => {
+        try {
+          if (config.getMessageId() != null) {
+            await this.#editCurrentMessage(config, message);
+          } else {
+            await this.#sendNewMessage(config, message);
+          }
+        } catch (error) {
+          console.error("Error sending message:", error);
         }
-      } catch (error) {
-        console.error("Error sending message:", error);
-      }
+      });
+
+      await Promise.all(promises);
+    } catch (error) {
+      console.error("Error retrieving configs:", error);
     }
   }
 

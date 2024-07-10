@@ -56,7 +56,7 @@ export class Discord {
   async #scrapeAndPublishGraph() {
     const data = await this.playerScraper.getPlayersOnline();
     if (!data) return;
-    this.playerManager.createNode(data.time, data.playerCount);
+    await this.playerManager.createNode(data.time, data.playerCount);
     await this.playerManager.generateAndDisplayGraph();
   }
 

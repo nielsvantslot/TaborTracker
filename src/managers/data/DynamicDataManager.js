@@ -152,6 +152,11 @@ export default class DynamicDataManager extends DataManager {
     }
   }
 
+  async replaceData(json) {
+    await this.#writeToFile(json);
+    console.log("Data replaced!!");
+  }
+
   /**
    * Writes data to the file.
    * @param {Object} data - The data to be written.
