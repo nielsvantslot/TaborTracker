@@ -3,11 +3,22 @@
 
 # Generator command
 - Upgrade confirmation
-    2nd button maybe perhaps look into modals
+    [ ] 2nd button maybe perhaps look into modals
 - Resetting generators
-    /generator reset
+    [x] /generator reset
 - Store generators
-    Some way of storing generators in JSON, should be fetched on startup,
-    This should take into account the downtime of turned on generators and recalculate their fuel
+    [x] Some way of storing generators in JSON, should be fetched on startup,
+    [x] This should take into account the downtime of turned on generators and recalculate their fuel
 - custom warning timers
-    Make it possible to set custom warnings, this is currently set at 1 hour.
+    [ ] Make it possible to set custom warnings, this is currently set at 1 hour.
+
+# Player graph
+    [ ] Make ping role configurable
+    [ ] On config change resend graph
+    [ ] Alert when servers are down (0 players)
+    [ ] Alert when servers are back up (0 > 0+)
+
+# Nursery
+- commands
+    [ ] Reset
+    [ ] UX/UI
