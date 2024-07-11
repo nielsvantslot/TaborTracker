@@ -14,6 +14,7 @@ const watchFile = (filePath, callback) => {
       try {
         const data = await callback();
         if (data) {
+          console.clear()
           FileManager.jsonToTable(data);
         }
       } catch (err) {
@@ -63,6 +64,7 @@ const main = async () => {
     // Initial read and display
     const jsonData = await fileManager.readFromFile();
     if (jsonData) {
+      console.clear()
       FileManager.jsonToTable(jsonData);
     }
 
