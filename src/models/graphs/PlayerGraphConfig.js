@@ -6,15 +6,18 @@ export default class PlayerGraphConfig extends Saveable {
   #guildId;
   #channelId;
   #messageId
+  #roleId;
 
-  constructor(guildId, channelId, messageId = null) {
+  constructor(guildId, channelId, messageId = null, roleId = null) {
     super();
     this.#guildId = guildId;
     this.#channelId = channelId;
     this.#messageId = messageId;
+    this.#roleId = roleId;
 
     this.setChannelId = this.withSave(this.setChannelId);
     this.setMessageId = this.withSave(this.setMessageId);
+    this.setRoleId = this.withSave(this.setRoleId);
   }
 
   getGuildId() {
@@ -38,11 +41,20 @@ export default class PlayerGraphConfig extends Saveable {
     this.#messageId = messageId;
   }
 
+  getRoleId() {
+    return this.#roleId;
+  }
+
+  setRoleId(roleId) {
+    this.#roleId = roleId;
+  }
+
   static revive(instance) {
     const config = new this(
       instance.guildId,
       instance.channelId,
       instance.messageId,
+      instance.roleId,
     );
     return config;
   }

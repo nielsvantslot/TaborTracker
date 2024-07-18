@@ -1,4 +1,4 @@
-import Mutex from "../../src/models/Mutex";
+import Mutex from "../../src/structs/Mutex";
 
 describe("Mutex", () => {
   let mutex;

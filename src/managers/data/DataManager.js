@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { __dirname } from "../../utils.js";
+import Mutex from "../../structs/Mutex";
 
 /**
  * Class representing a Data Manager.
@@ -28,14 +29,14 @@ export default class DataManager {
   #filePromise;
 
   /**
-   * Lock object to ensure synchronized file initialization.
-   * @type {Object}
-   * @static
+   * Mutex for synchronized file initialization.
+   * @type {Mutex}
+   * @private
    */
-  static #fileLock = {};
+  #mutex;
 
   /**
-   * Instances of DynamicDataManager.
+   * Instances of DataManager.
    * @type {Object}
    * @static
    */
@@ -49,11 +50,12 @@ export default class DataManager {
   constructor(subDirectory, fileName) {
     this.#directory = path.resolve(__dirname, "data", subDirectory);
     this._filePath = path.resolve(this.#directory, fileName);
+    this.#mutex = new Mutex();
   }
 
   /**
-   * Returns an instance of the subclass if it exists, otherwise creates and returns a new instance.
-   * @param {string} subclassName - The name of the subclass.
+   * Returns an instance of the DataManager if it exists, otherwise creates and returns a new instance.
+   * @param {string} subDirectory - The subdirectory name.
    * @param {string} fileName - The name of the file.
    * @returns {DataManager} The DataManager instance.
    */
@@ -61,10 +63,7 @@ export default class DataManager {
     const directory = path.resolve(__dirname, "data", subDirectory);
     const filePath = path.resolve(directory, fileName);
     if (!DataManager.#instances[filePath]) {
-      DataManager.#instances[filePath] = new DataManager(
-        subDirectory,
-        fileName,
-      );
+      DataManager.#instances[filePath] = new DataManager(subDirectory, fileName);
     }
     return DataManager.#instances[filePath];
   }
@@ -74,30 +73,19 @@ export default class DataManager {
    * @private
    */
   async #initializeFile() {
-    // Check if the file is already being initialized
-    if (!DataManager.#fileLock[this._filePath]) {
-      // Create a lock for this file
-      DataManager.#fileLock[this._filePath] = true;
+    await this.#mutex.acquire();
+    try {
+      await fs.access(this._filePath);
+    } catch (error) {
       try {
-        await fs.access(this._filePath);
-      } catch (error) {
-        console.log("making file");
+        console.log(`Creating file ${this._filePath}`);
         await fs.mkdir(this.#directory, { recursive: true });
         await fs.writeFile(this._filePath, JSON.stringify({}));
-      } finally {
-        // Release the lock
-        delete DataManager.#fileLock[this._filePath];
+      } catch (mkdirError) {
+        console.error("Error creating file:", mkdirError);
       }
-    } else {
-      // If another instance is already creating the file, wait for it to finish
-      await new Promise((resolve) => {
-        const interval = setInterval(() => {
-          if (!DataManager.#fileLock[this._filePath]) {
-            clearInterval(interval);
-            resolve();
-          }
-        }, 10);
-      });
+    } finally {
+      this.#mutex.release();
     }
   }
 
@@ -118,8 +106,8 @@ export default class DataManager {
   }
 
   /**
-   * Waits for the initialization of the data.
-   * @returns {Promise<void>} A promise that resolves when the generator data is initialized.
+   * Ensures the file is initialized before performing operations.
+   * @returns {Promise<void>} A promise that resolves when the file is initialized.
    * @protected
    */
   async _ensureSource() {
@@ -130,13 +118,17 @@ export default class DataManager {
   }
 
   /**
-   * Resets the instances of DynamicDataManager.
+   * Resets the instances of DataManager.
    * This method is intended for test cleanup purposes.
    */
   static resetInstances() {
     DataManager.#instances = {};
   }
 
+  /**
+   * Gets all instances of DataManager.
+   * @returns {Object} The instances of DataManager.
+   */
   static getInstances() {
     return DataManager.#instances;
   }

@@ -10,9 +10,15 @@
     [x] Some way of storing generators in JSON, should be fetched on startup,
     [x] This should take into account the downtime of turned on generators and recalculate their fuel
 - custom warning timers
-    [ ] Make it possible to set custom warnings, this is currently set at 1 hour.
+    [ ] Make it possible to set custom warnings per user, this is currently set at 1 hour.
 
 # Player graph
+- playergraph subcommands
+    [ ] setchanel
+    [ ] clearchannel
+    [ ] setrole
+    [ ] clearrole
+- other
     [ ] Make ping role configurable
     [ ] On config change resend graph
     [ ] Alert when servers are down (0 players)
