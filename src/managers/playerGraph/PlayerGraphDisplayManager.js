@@ -13,24 +13,31 @@ export default class PlayerGraphDisplay {
   }
 
   async displayGraph() {
-    const message = `<@&${roleId}> Number of players online: ${this.#currentPlayerCount}`;
-
-    await this.#reviseMessage({
-      content: message,
-      files: [this.#graph],
-    });
+    await this.#reviseMessage();
   }
 
-  async #reviseMessage(message) {
+  async #reviseMessage() {
     try {
       const configs = await PlayerGraphConfigManager.getInstance().getAll();
 
       const promises = configs.map(async (config) => {
         try {
+          let message = "";
+          if (config.getRoleId()) {
+            message += `<@&${config.getRoleId()}> `
+          }
+          message += `Number of players online: ${this.#currentPlayerCount}`;
+
           if (config.getMessageId() != null) {
-            await this.#editCurrentMessage(config, message);
+            await this.#editCurrentMessage(config, {
+              content: message,
+              files: [this.#graph],
+            });
           } else {
-            await this.#sendNewMessage(config, message);
+            await this.#sendNewMessage(config, {
+              content: message,
+              files: [this.#graph],
+            });
           }
         } catch (error) {
           console.error("Error sending message:", error);

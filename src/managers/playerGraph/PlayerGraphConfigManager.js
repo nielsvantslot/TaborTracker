@@ -42,14 +42,9 @@ export default class PlayerGraphConfigManager {
    */
   async addOrUpdate(guildId, channelId) {
     const res = await this.#dataManager.readRecord(guildId);
-    let config;
-    if (this.#configs.get(guildId)) {
-      config = this.#configs.get(guildId);
+    if (res) {
+      const config = PlayerGraphConfig.revive(res);
       config.setChannelId(channelId);
-    } else if (res) {
-      config = PlayerGraphConfig.revive(res);
-      config.setChannelId(channelId);
-      this.#configs.put(guildId, config);
     } else {
       this.create(guildId, channelId);
     }
@@ -62,6 +57,7 @@ export default class PlayerGraphConfigManager {
    */
   async get(guildId) {
     const res = await this.#dataManager.readRecord(guildId);
+    if (!res) return;
     return PlayerGraphConfig.revive(res);
   }
 
@@ -96,7 +92,6 @@ export default class PlayerGraphConfigManager {
    */
   async create(guildId, channelId) {
     const config = new PlayerGraphConfig(guildId, channelId);
-    this.#configs.put(guildId, config);
     await this.#dataManager.createRecord(guildId, config.serialize());
     return config;
   }

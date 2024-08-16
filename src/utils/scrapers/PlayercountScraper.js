@@ -1,11 +1,12 @@
 import axios from "axios";
 import cheerio from "cheerio";
-import { getCurrentTime } from "../../utils.js";
 import { url } from "../../../util/constants.js";
 
 export class PlayerCountScraper {
+  #previousPlayersOnline
+
   constructor() {
-    this.previousPlayersOnline = null;
+    this.#previousPlayersOnline = null;
   }
 
   async fetchPageContent() {
@@ -35,11 +36,11 @@ export class PlayerCountScraper {
       const html = await this.fetchPageContent();
       const playersOnline = this.parsePlayersOnline(html);
 
-      if (playersOnline === this.previousPlayersOnline) {
+      if (playersOnline === this.#previousPlayersOnline) {
         return null;
       }
 
-      this.previousPlayersOnline = playersOnline;
+      this.#previousPlayersOnline = playersOnline;
 
       return {
         playerCount: playersOnline,

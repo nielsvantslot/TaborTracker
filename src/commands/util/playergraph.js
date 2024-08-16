@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "discord.js";
 import PlayerGraphConfigManager from "../../managers/playerGraph/PlayerGraphConfigManager.js";
+import Discord from "../../discord.js";
 
 const data = new SlashCommandBuilder()
   .setName("playergraph")
@@ -11,7 +12,14 @@ const data = new SlashCommandBuilder()
     subcommand.setName("clearchannel").setDescription("Removes the live player count from the guild"),
   )
   .addSubcommand((subcommand) =>
-    subcommand.setName("setrole").setDescription("Sets the role for notifications"),
+      subcommand
+        .setName("setrole").setDescription("Sets the role for notifications")
+        .addRoleOption(option =>
+          option
+            .setName("pingrole")
+            .setDescription("The role that will be used for updates.")
+            .setRequired(true)
+        )
   )
   .addSubcommand((subcommand) =>
     subcommand.setName("clearrole").setDescription("Clears the role for notifications"),
@@ -29,6 +37,12 @@ async function setChannel(interaction) {
 async function clearChannel(interaction) {
   const configs = PlayerGraphConfigManager.getInstance();
   const config = await configs.get(interaction.guildId);
+  if (!config) {
+    return interaction.reply({
+      content: "There is no configuration for this guild yet.",
+      ephemeral: true,
+    });
+  }
   await configs.delete(config.getGuildId());
 
   const channel = Discord.getClient().channels.cache.get(config.getChannelId());
@@ -42,17 +56,38 @@ async function clearChannel(interaction) {
 }
 
 async function setRole(interaction) {
-  // TODO: get role
+  const role = interaction.options.getRole("pingrole");
   const configs = PlayerGraphConfigManager.getInstance();
   const config = await configs.get(interaction.guildId);
-  config.setRole(roleId);
+  if (!config) {
+    return interaction.reply({
+      content: "There is no configuration for this guild yet.",
+      ephemeral: true,
+    });
+  }
+  config.setRoleId(role.id);
+
+  interaction.reply({
+    content: "The role has been set",
+    ephemeral: true,
+  });
 }
 
 async function clearRole(interaction) {
-  // TODO: get role
   const configs = PlayerGraphConfigManager.getInstance();
   const config = await configs.get(interaction.guildId);
-  config.setRole(null);
+  if (!config) {
+    return interaction.reply({
+      content: "There is no configuration for this guild yet.",
+      ephemeral: true,
+    });
+  }
+  config.setRoleId(null);
+
+  interaction.reply({
+    content: "The role has been removed",
+    ephemeral: true,
+  });
 }
 
 async function execute(interaction) {
@@ -61,11 +96,14 @@ async function execute(interaction) {
       setChannel(interaction);
       break;
     case "clearchannel":
-      clearChannel();
+      clearChannel(interaction);
+      break;
     case "setrole":
-      setRole();
+      setRole(interaction);
+      break;
     case "clearrole":
-      clearRole();
+      clearRole(interaction);
+      break;
   }
 }
 

@@ -76,6 +76,7 @@ export default class PlayerGraphConfig extends Saveable {
       guildId: this.#guildId,
       channelId: this.#channelId,
       messageId: this.#messageId,
+      roleId: this.#roleId,
     };
   }
 }

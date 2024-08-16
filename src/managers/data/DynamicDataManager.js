@@ -1,6 +1,6 @@
+import { promises as fs } from "fs";
 import Mutex from "../../structs/Mutex.js";
 import DataManager from "./DataManager.js";
-import { promises as fs } from "fs";
 
 /**
  * Class representing a Dynamic Data Manager.

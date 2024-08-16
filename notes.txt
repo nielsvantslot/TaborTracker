@@ -14,12 +14,12 @@
 
 # Player graph
 - playergraph subcommands
-    [ ] setchanel
-    [ ] clearchannel
-    [ ] setrole
-    [ ] clearrole
+    [x] setchanel
+    [x] clearchannel
+    [x] setrole
+    [x] clearrole
 - other
-    [ ] Make ping role configurable
+    [x] Make ping role configurable
     [ ] On config change resend graph
     [ ] Alert when servers are down (0 players)
     [ ] Alert when servers are back up (0 > 0+)

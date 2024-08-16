@@ -1,7 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
+import Mutex from "../../structs/Mutex.js";
 import { __dirname } from "../../utils.js";
-import Mutex from "../../structs/Mutex";
 
 /**
  * Class representing a Data Manager.
