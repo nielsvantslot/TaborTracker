@@ -3,7 +3,7 @@
 
 # Generator command
 - Upgrade confirmation
-    [ ] 2nd button maybe perhaps look into modals
+    [x] 2nd button maybe perhaps look into modals
 - Resetting generators
     [x] /generator reset
 - Store generators

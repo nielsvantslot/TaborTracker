@@ -10,6 +10,7 @@ import Saveable from "../abstracts/Saveable.js";
  * @extends Saveable
  */
 export default class Generator extends Saveable {
+  #wantsToUpgrade = false;
   /**
    * Create a Generator.
    * @param {string} uid - The user ID.
@@ -112,6 +113,7 @@ export default class Generator extends Saveable {
    * @returns {Promise<void>}
    */
   async upgradeLevel() {
+    this.setWantsToUpgrade(false);
     const percentage = (await this.getFuelLevel()) / 100;
     this.level = Math.min(this.level + 1, 3);
     this.fuel = (await this._getMaxFuel()) * percentage;
@@ -192,6 +194,15 @@ export default class Generator extends Saveable {
    */
   getTimeLeft() {
     return Math.floor(this.fuel / 60);
+  }
+
+  setWantsToUpgrade(bool) {
+    this.#wantsToUpgrade = bool;
+    return this;
+  }
+
+  getWantsToUpgrade() {
+    return this.#wantsToUpgrade;
   }
 
   /**

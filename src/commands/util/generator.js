@@ -53,6 +53,9 @@ async function handleConfirmation(interaction, response, generator) {
           await generator.addFuel();
           break;
         case "upgradeLevel":
+          await generator.setWantsToUpgrade(true);
+          break;
+        case "upgradeLevelConfirm":
           await generator.upgradeLevel();
           break;
       }
@@ -111,12 +114,22 @@ async function generateUI(generator) {
     .setLabel(powerButtonLabel)
     .setStyle(powerButtonStyle);
 
-  const bUpgrade = (await generator.isMaxLevel())
-    ? null
-    : new ButtonBuilder()
-        .setCustomId("upgradeLevel")
-        .setLabel("Upgrade generator")
+  let bUpgrade;
+  if (generator.getWantsToUpgrade()) {
+    bUpgrade = new ButtonBuilder()
+        .setCustomId("upgradeLevelConfirm")
+        .setLabel("Confirm upgrade")
         .setStyle(ButtonStyle.Secondary);
+  }
+  else {
+    bUpgrade = (await generator.isMaxLevel())
+      ? null
+      : new ButtonBuilder()
+          .setCustomId("upgradeLevel")
+          .setLabel("Upgrade generator")
+          .setStyle(ButtonStyle.Secondary);
+  }
+
 
   const components = [bAddFuel, bPower, bUpgrade].filter(
     (component) => component !== null,
