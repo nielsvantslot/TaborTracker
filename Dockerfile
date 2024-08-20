@@ -5,10 +5,12 @@ FROM node:20
 WORKDIR /app
 
 # Copy the application files into the working directory
-COPY . /app
+COPY . .
 
 # Install the application dependencies
 RUN npm install
+
+EXPOSE 8080
 
 # Define the entry point for the container
 CMD ["npm", "run", "prod"]
