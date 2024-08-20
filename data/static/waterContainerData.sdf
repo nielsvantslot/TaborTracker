@@ -1,22 +1,22 @@
 {
     "Nursery Tank": {
-      "Container": "Nursery Tank",
-      "Water Capacity": 1000
+      "name": "Nursery Tank",
+      "capacity": 1000
     },
     "Plastic Bottle": {
-      "Container": "Plastic Bottle",
-      "Water Capacity": 35
+      "name": "Plastic Bottle",
+      "capacity": 35
     },
     "Water Bottle": {
-      "Container": "Water Bottle",
-      "Water Capacity": 49
+      "name": "Water Bottle",
+      "capacity": 49
     },
     "Thermos": {
-      "Container": "Thermos",
-      "Water Capacity": 60
+      "name": "Thermos",
+      "capacity": 60
     },
     "Canteen": {
-      "Container": "Canteen",
-      "Water Capacity": 75
+      "name": "Canteen",
+      "capacity": 75
     }
 }

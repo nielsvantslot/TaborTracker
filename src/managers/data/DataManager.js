@@ -35,12 +35,23 @@ export default class DataManager {
    */
   #mutex;
 
+  #filteredData;
+
   /**
    * Instances of DataManager.
    * @type {Object}
    * @static
    */
   static #instances = {};
+
+  static operators = {
+    "==": (a, b) => a === b,
+    "!=": (a, b) => a !== b,
+    ">": (a, b) => a > b,
+    "<": (a, b) => a < b,
+    ">=": (a, b) => a >= b,
+    "<=": (a, b) => a <= b,
+  };
 
   /**
    * Constructs a DataManager instance.
@@ -103,6 +114,26 @@ export default class DataManager {
       console.error("Error reading from file:", error);
       return null;
     }
+  }
+
+  async getWhere(property, operator, value) {
+    this.#filteredData = await this._readFromFile();
+    this.#filteredData = Object.values(this.#filteredData).filter((item) =>
+      DataManager.operators[operator](item[property], value),
+    );
+
+    return this;
+  }
+
+  where(property, operator, value) {
+    this.#filteredData = Object.values(this.#filteredData).filter((item) =>
+      DataManager.operators[operator](item[property], value),
+    );
+    return this;
+  }
+
+  getResult() {
+    return this.#filteredData;
   }
 
   /**

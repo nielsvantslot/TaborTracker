@@ -14,18 +14,7 @@ export default class DynamicDataManager extends DataManager {
    */
   static #instances = {};
 
-  #filteredData;
-
   #mutex;
-
-  static operators = {
-    "==": (a, b) => a === b,
-    "!=": (a, b) => a !== b,
-    ">": (a, b) => a > b,
-    "<": (a, b) => a < b,
-    ">=": (a, b) => a >= b,
-    "<=": (a, b) => a <= b,
-  };
 
   /**
    * Constructs a DynamicDataManager instance.
@@ -81,26 +70,6 @@ export default class DynamicDataManager extends DataManager {
   async readRecord(key) {
     const data = await this._readFromFile();
     return data[key] || null;
-  }
-
-  async getWhere(property, operator, value) {
-    this.#filteredData = await this.readAllRecords();
-    this.#filteredData = Object.values(this.#filteredData).filter((item) =>
-      DynamicDataManager.operators[operator](item[property], value),
-    );
-
-    return this;
-  }
-
-  where(property, operator, value) {
-    this.#filteredData = Object.values(this.#filteredData).filter((item) =>
-      DynamicDataManager.operators[operator](item[property], value),
-    );
-    return this; // Return the instance for chaining
-  }
-
-  getResult() {
-    return this.#filteredData;
   }
 
   /**
