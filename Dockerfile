@@ -10,7 +10,11 @@ COPY . .
 # Install the application dependencies
 RUN npm install
 
+# Install netcat to create a dummy listener
+RUN apt-get update && apt-get install -y netcat
+
+# Expose port 8080
 EXPOSE 8080
 
-# Define the entry point for the container
-CMD ["npm", "run", "prod"]
+# Start the application and run a dummy listener on port 8080
+CMD ["sh", "-c", "npm run prod & nc -lkp 8080"]
