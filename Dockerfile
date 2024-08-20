@@ -10,11 +10,8 @@ COPY . .
 # Install the application dependencies
 RUN npm install
 
-# Install netcat-openbsd to create a dummy listener
-RUN apt-get update && apt-get install -y netcat-openbsd
-
 # Expose port 8080
 EXPOSE 8080
 
-# Start the application and run a dummy listener on port 8080
-CMD ["sh", "-c", "npm run prod & nc -lkp 8080"]
+# Start the application and the dummy HTTP server
+CMD ["sh", "-c", "npm run prod & node dummyServer.js"]
