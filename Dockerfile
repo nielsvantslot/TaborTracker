@@ -10,8 +10,8 @@ COPY . .
 # Install the application dependencies
 RUN npm install
 
-# Install netcat to create a dummy listener
-RUN apt-get update && apt-get install -y netcat
+# Install netcat-openbsd to create a dummy listener
+RUN apt-get update && apt-get install -y netcat-openbsd
 
 # Expose port 8080
 EXPOSE 8080
