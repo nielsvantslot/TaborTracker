@@ -46,7 +46,22 @@ async function clearChannel(interaction) {
   await configs.delete(config.getGuildId());
 
   const channel = Discord.getClient().channels.cache.get(config.getChannelId());
+
+  if (!channel) {
+    return interaction.reply({
+      content: "Channel not found.",
+      ephemeral: true,
+    });
+  }
   const message = await channel.messages.fetch(config.getMessageId());
+  
+  if (!message) {
+    return interaction.reply({
+      content: "Message not found.",
+      ephemeral: true,
+    });
+  }
+
   await message.delete();
 
   interaction.reply({
