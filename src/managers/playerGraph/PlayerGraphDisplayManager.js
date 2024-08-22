@@ -34,10 +34,14 @@ export default class PlayerGraphDisplay {
               files: [this.#graph],
             });
           } else {
-            await this.#sendNewMessage(config, {
-              content: message,
-              files: [this.#graph],
-            });
+            try {
+              await this.#sendNewMessage(config, {
+                content: message,
+                files: [this.#graph],
+              });
+            } catch (error) {
+              console.error(error);
+            }
           }
         } catch (error) {
           console.error("Error sending message:", error);
@@ -56,7 +60,11 @@ export default class PlayerGraphDisplay {
       const orig = await channel.messages.fetch(config.getMessageId());
       await orig.edit(message);
     } catch (error) {
-      this.#sendNewMessage(config, message);
+      try {
+        await this.#sendNewMessage(config, message);
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 

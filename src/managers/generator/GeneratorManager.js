@@ -59,12 +59,20 @@ class GeneratorManager {
   }
 
   async update(id, generator) {
-    this.#dataManager.updateRecord(id, generator.serialize());
+    try {
+      await this.#dataManager.updateRecord(id, generator.serialize());
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async delete(id) {
     this.#generators.remove(id);
-    await this.#dataManager.deleteRecord(id);
+    try {
+      await this.#dataManager.deleteRecord(id);
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
